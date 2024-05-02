@@ -1,0 +1,65 @@
+.form-container {
+    min-width: 250px; /* set a minimum width for the form container */
+    width: 300px; /* set a fixed width for the form container */
+    margin: 0 auto; /* center the form container */
+}
+
+.form-container input {
+    padding-left: 10px; /* Add left padding to input fields */
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .sign-up-header {
+      font-size: 16px; /* reduce font size on smaller screens */
+    }
+    .form-container {
+      width: 200px; /* reduce form width on smaller screens */
+    }
+}
+  
+input[type='text'],
+input[type='password'],
+input[type='email'],
+input[type='date'] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+  
+button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+  
+button:hover {
+    background-color: #0056b3;
+}
+  
+.form-link {
+    display: block;
+    margin-top: 10px;
+    text-align: center;
+    text-decoration: none;
+    color: #007bff;
+}
+
+.form-link:hover {
+    color: #0056b3;
+}
+
+.required {
+    color: red;
+    font-size: 16px;
+    position: relative;
+    top: -3px;
+    left: 5px;
+}

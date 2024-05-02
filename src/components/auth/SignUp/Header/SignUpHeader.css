@@ -1,0 +1,13 @@
+.sign-up-header {
+    max-width: 100%; /* prevent header from growing beyond parent width */
+    background-color: #f2f2f2;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.sign-up-header h1 {
+    font-size: 36px;
+    font-weight: bold;
+    color: #333;
+}

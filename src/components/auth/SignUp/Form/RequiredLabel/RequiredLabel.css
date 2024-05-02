@@ -1,0 +1,14 @@
+.required-label {
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: normal; /* changed from bold to normal */
+    color: #333;
+}
+
+.required {
+    color: red;
+    font-size: 16px;
+    position: relative;
+    top: -3px;
+    left: 5px;
+}
