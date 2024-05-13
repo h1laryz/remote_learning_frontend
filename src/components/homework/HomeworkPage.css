@@ -1,0 +1,19 @@
+/* homework.css */
+.student-homework-page {
+    padding: 20px;
+  }
+  
+  .assignment {
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  
+  .assignment h2 {
+    margin-top: 0;
+  }
+  
+  .assignment p {
+    margin-bottom: 5px;
+  }
+  

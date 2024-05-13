@@ -1,0 +1,13 @@
+.vertical-circle-list-container {
+  width: 250px; /* Ширина контейнера */
+  height: calc(100vh - 20px); /* Высота контейнера (высота минус отступы) */
+  overflow-y: auto; /* Добавление вертикальной полосы прокрутки */
+  padding: 0; /* Убираем внутренние отступы */
+  float: left; /* Располагаем слева */
+}
+
+.circle-list {
+  display: flex;
+  flex-direction: column; /* Располагаем кружки снизу вверх */
+  margin-bottom: 0; /* Remove the margin */
+}

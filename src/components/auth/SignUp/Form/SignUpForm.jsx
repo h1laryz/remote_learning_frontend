@@ -12,6 +12,17 @@ import RequiredLabel from './RequiredLabel/RequiredLabel';
 registerLocale('en', enLocale);
 registerLocale('uk', ukLocale);
 
+function formatRFC3339Date(date) {
+  const isoString = date.toISOString(); // Получаем строку в формате ISO8601
+
+  if (isoString === null)
+  {
+    return isoString;
+  }
+
+  return isoString.split('T')[0]; // Обрезаем время и возвращаем только дату
+}
+
 const SignUpForm = () => {
   const { t, i18n } = useTranslation();
   const [dateOfBirth, setDateOfBirth] = useState(null);
@@ -32,17 +43,16 @@ const SignUpForm = () => {
     const username = formData.get('username');
     const email = formData.get('email');
     const password = formData.get('password');
-    const dateOfBirth = formData.get('dateOfBirth');
-  
+
     // Create request body
     const body = {
       surname,
-      lastName,
-      middleName: middleName || '', // Set middleName to empty string if it's null or undefined
+      last_name: lastName,
+      middle_name: middleName,
+      date_of_birth: formatRFC3339Date(dateOfBirth),
       username,
       email,
       password,
-      dateOfBirth,
     };
   
     try {
