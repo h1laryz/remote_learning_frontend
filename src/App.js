@@ -47,7 +47,7 @@ function App() {
             <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/admin" element={jwtToken ? <AdminPage /> : <Navigate to="/login" replace />} />
-            <Route path="/assignments" element={<StudentHomeworkPage />} />
+            <Route path="/assignments" element={<TeacherHomeworkPage />} />
             {/* <Route path="/chat/:chatId" element={<Chat onLogout={handleLogout} />} /> */} 
           </Routes>
         </div>

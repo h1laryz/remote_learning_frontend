@@ -20,6 +20,7 @@ const TeacherHomeworkPage = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [messageVisible, setMessageVisible] = useState(false);
   const [markInputs, setMarkInputs] = useState({}); // Состояние для хранения значений ввода оценок
+  const [isAddingAssignment, setIsAddingAssignment] = useState(false);
 
   const { t, i18n } = useTranslation();
 
@@ -41,6 +42,10 @@ const TeacherHomeworkPage = () => {
 
     fetchAssignments();
   }, []);
+
+  const handleAddAssignment = () => {
+    setIsAddingAssignment(prevState => !prevState);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -140,6 +145,27 @@ const TeacherHomeworkPage = () => {
   return (
     <div className="teacher-homework-page">
       <h1>Teacher's Assignments Page</h1>
+      <button onClick={handleAddAssignment}>{isAddingAssignment ? 'Close Form' : 'Add New Assignment'}</button>
+      {isAddingAssignment && (
+        <div>
+          <h2>Add New Assignment</h2>
+          <form onSubmit={handleSubmit}>
+            <input type="file" name="assignment_file" onChange={handleFileChange} />
+            <DatePicker
+              selected={deadline}
+              onChange={(date) => setDeadline(date)}
+              wrapperClassName="datePicker"
+              showTimeSelect
+              dateFormat="MMMM d, yyyy h:mm aa"
+              placeholderText={t('deadline')}
+              locale={i18n.language}
+            />
+            <input type="text" name="subject_group_name" placeholder="Subject Group Name" value={newAssignmentData.subject_group_name} onChange={handleInputChange} />
+            <input type="text" name="subject_name" placeholder="Subject Name" value={newAssignmentData.subject_name} onChange={handleInputChange} />
+            <input type="text" name="assignment_name" placeholder="Assignment Name" value={newAssignmentData.assignment_name} onChange={handleInputChange} />
+            <button type="submit">Submit</button>
+          </form>
+        </div>)}
       <div className="message">
         {messageVisible ? (requestSuccess ? 'Status: Success' : `Status: ${errorMessage}`) : ''}
       </div>
