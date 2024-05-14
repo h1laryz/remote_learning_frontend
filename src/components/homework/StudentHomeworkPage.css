@@ -1,0 +1,53 @@
+.student-homework-page {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.student-homework-page h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.student-homework-page .assignment {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.student-homework-page .assignment h2 {
+  font-size: 20px;
+  margin-bottom: 5px;
+}
+
+.student-homework-page .assignment p {
+  margin-bottom: 5px;
+}
+
+.student-homework-page .assignment a {
+  color: blue;
+  text-decoration: underline;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.student-homework-page .assignment form {
+  margin-top: 10px;
+}
+
+.student-homework-page .assignment form input[type="file"] {
+  margin-right: 10px;
+}
+
+.student-homework-page .assignment form button {
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.student-homework-page .assignment form button:hover {
+  background-color: #0056b3;
+}

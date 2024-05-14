@@ -1,79 +1,136 @@
-// import React, { useState } from 'react';
-// import VerticalCircleList from './List/VerticalCircleList';
-// import Chat from './Chat';
-// import './ChatPage.css';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useJwt } from "react-jwt";
+import moment from 'moment';
+import './ChatPage.css'
 
-// const ChatPage = ({ chats }) => {
-//   const [selectedChat, setSelectedChat] = useState(null);
-
-//   const handleChatSelect = (chat) => {
-//     setSelectedChat(chat);
-//   };
-
-//   return (
-//     <div className="chat-page-container">
-//       <div className="sidebar">
-//         <VerticalCircleList chats={chats} onChatSelect={handleChatSelect} />
-//       </div>
-//       <div className="main-content">
-//         {selectedChat ? <Chat chatData={selectedChat} /> : <div className="empty-chat">Выберите чат</div>}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ChatPage;
-
-
-import React, { useState } from 'react';
-import VerticalCircleList from './List/VerticalCircleList';
-import Chat from './Chat';
-import './ChatPage.css';
+const BASE_URL = 'http://localhost:8080';
 
 const ChatPage = () => {
-  const [selectedChat, setSelectedChat] = useState(null);
+  const [chatList, setChatList] = useState([]);
+  const [activeChat, setActiveChat] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [messageContent, setMessageContent] = useState('');
+  const [loading, setLoading] = useState(true);
+  const { decodedToken } = useJwt(localStorage.getItem('jwtToken'));
 
-  // Хардкодированные данные чатов
-  const chatsData = [
-    {
-      name: "Chat 1",
-      backgroundColor: "#ff7f0e",
-      participants: [
-        { avatar: "avatar1.jpg", nickname: "User 1" },
-        { avatar: "avatar2.jpg", nickname: "User 2" },
-        { avatar: "avatar3.jpg", nickname: "User 3" }
-      ],
-      messages: [
-        { sender: "User 1", text: "Hello!", timestamp: "10:00 AM" },
-        { sender: "User 2", text: "Hi there!", timestamp: "10:05 AM" },
-        { sender: "User 1", text: "How are you?", timestamp: "10:10 AM" },
-      ]
-    },
-    {
-      name: "Chat 2",
-      backgroundColor: "#2ca02c",
-      participants: [
-        { avatar: "avatar4.jpg", nickname: "User 4" },
-        { avatar: "avatar5.jpg", nickname: "User 5" }
-      ],
-      messages: [
-        { sender: "User 4", text: "Hey!", timestamp: "11:00 AM" },
-        { sender: "User 5", text: "Hi!", timestamp: "11:05 AM" },
-      ]
+  // Получение списка чатов
+  useEffect(() => {
+    const fetchChatList = async () => {
+      try {
+        const jwtToken = localStorage.getItem('jwtToken');
+        const response = await axios.get(`${BASE_URL}/v1/subject_groups`, {
+          headers: { Authorization: jwtToken }
+        });
+        console.log('Chat list response:', JSON.stringify(response));
+        setChatList(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching chat list:', error);
+      }
+    };
+
+    fetchChatList();
+  }, []);
+
+  // Получение сообщений для активного чата
+  useEffect(() => {
+    let interval;
+    if (activeChat) {
+      const fetchMessages = async () => {
+        try {
+          const jwtToken = localStorage.getItem('jwtToken');
+          const response = await axios.get(`${BASE_URL}/v1/chat/messages/${activeChat}`, {
+            headers: { Authorization: jwtToken }
+          });
+          console.log('Messages response:', JSON.stringify(response));
+          
+          // Обработка сообщений и времени
+          const processedMessages = response.data.map(message => ({
+            ...message,
+            timestamp: moment.utc(message.timestamp, 'YYYY-MM-DD HH:mm:ss').local().format('YYYY-MM-DD HH:mm:ss')
+          }));
+          
+          // Сортировка сообщений по времени (новые сверху)
+          const sortedMessages = processedMessages.sort((a, b) => moment(b.timestamp).valueOf() - moment(a.timestamp).valueOf());
+
+          setMessages(sortedMessages);
+        } catch (error) {
+          console.error('Error fetching messages:', error);
+        }
+      };
+      
+      fetchMessages();
+      interval = setInterval(fetchMessages, 2000);
+    } else {
+      clearInterval(interval);
+      setMessages([]);
     }
-  ];
 
-  const handleChatSelect = (chat) => {
-    setSelectedChat(chat);
+    return () => clearInterval(interval);
+  }, [activeChat]);
+
+  // Отправка сообщения
+  const sendMessage = async () => {
+    try {
+      const jwtToken = localStorage.getItem('jwtToken');
+      const response = await axios.post(`${BASE_URL}/v1/chat/send_message`, {
+        subject_group_name: activeChat,
+        content: messageContent
+      }, {
+        headers: { Authorization: jwtToken }
+      });
+      console.log('Send message response:', JSON.stringify(response));
+      setMessageContent('');
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
   };
 
   return (
-    <div className="chat-page-container">
-      <div className="sidebar">
-        <VerticalCircleList chats={chatsData} onChatSelect={handleChatSelect} />
+    <div className="chat-page">
+      <div className="chat-panel">
+        {loading ? (
+          <div>Loading...</div>
+        ) : chatList.length > 0 ? (
+          chatList.map(chat => (
+            <div key={chat} onClick={() => setActiveChat(chat)} className={`chat-circle ${chat === activeChat ? 'active' : ''}`}>
+              {chat}
+            </div>
+          ))
+        ) : (
+          <div>No chats yet. Please wait to be added to a subject group.</div>
+        )}
       </div>
-      <div className="main-content">
-        {selectedChat ? <Chat chatData={selectedChat} /> : <div className="empty-chat">Выберите чат</div>}
+      <div className="chat-area">
+        {activeChat ? (
+          <div>
+            <h2>{activeChat}</h2>
+            <div className="messages">
+              {messages && messages.map((message, index) => (
+                <div key={index} className={`message ${message.user_id === decodedToken.user_id ? 'own' : 'other'}`}>
+                  <div className="message-info">{moment(message.timestamp).format('YYYY-MM-DD HH:mm:ss')}</div>
+                  <div className="message-content">
+                    {message.surname} {message.last_name}<br />
+                    {message.content}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <input
+              type="text"
+              value={messageContent}
+              onChange={e => setMessageContent(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter') sendMessage();
+              }}
+              placeholder="Type a message..."
+            />
+            <button onClick={sendMessage}>Send</button>
+          </div>
+        ) : (
+          <div className="no-chat-selected">Select a chat to start messaging</div>
+        )}
       </div>
     </div>
   );

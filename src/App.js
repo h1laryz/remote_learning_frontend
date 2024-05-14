@@ -8,6 +8,7 @@ import ChatPage from './components/Chat/ChatPage';
 import AdminPage from './components/admin/AdminPage'
 import StudentHomeworkPage from './components/homework/StudentHomeworkPage';
 import TeacherHomeworkPage from './components/homework/TeacherHomeworkPage';
+import StudentDiary from './components/diary/StudentDiary'
 //import Chat from './components/Chat/Chat';
 
 import { useJwt } from "react-jwt";
@@ -34,6 +35,13 @@ function App() {
     localStorage.removeItem('jwtToken');
   };
 
+  if (!decodedToken)
+  {
+    return "Loading...";
+  }
+
+  const isTeacher = decodedToken.role === 'teacher';
+
   return (
     <I18nextProvider i18n={i18n}>
       <Router>
@@ -47,7 +55,8 @@ function App() {
             <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/admin" element={jwtToken ? <AdminPage /> : <Navigate to="/login" replace />} />
-            <Route path="/assignments" element={<TeacherHomeworkPage />} />
+            <Route path="/assignments" element={isTeacher ? <TeacherHomeworkPage /> : <StudentHomeworkPage/>} />
+            <Route path="/diary" element={<StudentDiary />} />
             {/* <Route path="/chat/:chatId" element={<Chat onLogout={handleLogout} />} /> */} 
           </Routes>
         </div>

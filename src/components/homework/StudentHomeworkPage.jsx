@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-import './HomeworkPage.css';
+import './StudentHomeworkPage.css'
 
 const StudentHomeworkPage = () => {
-  const [assignments, setAssignments] = useState([]);
+  const [subjects, setSubjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [file, setFile] = useState(null);
+  const [expandedSubjects, setExpandedSubjects] = useState(new Set());
 
   const [requestSuccess, setRequestSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [messageVisible, setMessageVisible] = useState(false);
 
   useEffect(() => {
-    const fetchAssignments = async () => {
+    const fetchSubjects = async () => {
       try {
         const jwtToken = localStorage.getItem('jwtToken');
 
@@ -22,7 +23,10 @@ const StudentHomeworkPage = () => {
             Authorization: `${jwtToken}`
           }
         });
-        setAssignments(response.data);
+
+        // Группируем задания по предметам
+        const groupedSubjects = groupAssignmentsBySubjects(response.data);
+        setSubjects(groupedSubjects);
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching assignments:', error);
@@ -30,8 +34,29 @@ const StudentHomeworkPage = () => {
       }
     };
 
-    fetchAssignments();
+    fetchSubjects();
   }, []);
+
+  const groupAssignmentsBySubjects = (assignments) => {
+    const subjectsMap = new Map();
+    assignments.forEach((assignment) => {
+      if (!subjectsMap.has(assignment.subject_name)) {
+        subjectsMap.set(assignment.subject_name, []);
+      }
+      const subjectAssignments = subjectsMap.get(assignment.subject_name);
+      subjectAssignments.push(assignment);
+    });
+
+    const groupedSubjects = [];
+    subjectsMap.forEach((assignments, subjectName) => {
+      groupedSubjects.push({
+        subject_name: subjectName,
+        assignments: assignments
+      });
+    });
+
+    return groupedSubjects;
+  };
 
   const handleSubmit = async (e, assignment) => {
     e.preventDefault();
@@ -74,6 +99,22 @@ const StudentHomeworkPage = () => {
     setFile(e.target.files[0]);
   };
 
+  const toggleSubject = (subjectName) => {
+    const expandedSubjectsCopy = new Set(expandedSubjects);
+    if (expandedSubjectsCopy.has(subjectName)) {
+      expandedSubjectsCopy.delete(subjectName);
+    } else {
+      expandedSubjectsCopy.add(subjectName);
+    }
+    setExpandedSubjects(expandedSubjectsCopy);
+  };
+
+  const isDeadlineExpired = (deadline) => {
+    const currentDateTime = new Date();
+    const deadlineDateTime = new Date(deadline);
+    return currentDateTime > deadlineDateTime;
+  };
+
   return (
     <div className="student-homework-page">
       <h1>Homework Page</h1>
@@ -81,27 +122,38 @@ const StudentHomeworkPage = () => {
         <p>Loading...</p>
       ) : (
         <div>
-          {assignments.length === 0 ? (
+          {subjects.length === 0 ? (
             <p>No assignments available</p>
           ) : (
-            assignments.map((assignment, index) => (
-              <div key={index} className="assignment">
-                <h2>{assignment.assignment_name}</h2>
-                <p>Deadline: {assignment.deadline}</p>
-                <a>{assignment.s3_location}</a>
-                <p>Solution: {assignment.solution ? assignment.solution.s3_location : 'Not submitted'}</p>
-                <p>Group: {assignment.subject_group_name}</p>
-                <p>Subject: {assignment.subject_name}</p>
-                {assignment.solution ? (
-                  <p>Mark: {assignment.solution.mark ? assignment.solution.mark : 'no mark yet'}</p>
-                  ) : (
-                  <p>No mark yet</p>
+            subjects.map((subject, index) => (
+              <div key={index} className="subject">
+                <h2 onClick={() => toggleSubject(subject.subject_name)}>
+                  {subject.subject_name}
+                </h2>
+                {expandedSubjects.has(subject.subject_name) && (
+                  <div>
+                    {subject.assignments.map((assignment, assignmentIndex) => (
+                      <div key={assignmentIndex} className="assignment">
+                        <h4>{assignment.assignment_name}</h4>
+                        <p>Deadline: {assignment.deadline}</p>
+                        <a>{assignment.s3_location}</a>
+                        <p>Solution: {assignment.solution ? assignment.solution.s3_location : 'Not submitted'}</p>
+                        {assignment.solution ? (
+                          <p>Mark: {assignment.solution.mark ? assignment.solution.mark : 'no mark yet'}</p>
+                        ) : (
+                          isDeadlineExpired(assignment.deadline) ? (
+                            <p>Deadline expired</p>
+                          ) : (
+                            <form onSubmit={(e) => handleSubmit(e, assignment)}>
+                              <input type="file" onChange={handleFileChange} />
+                              <button type="submit">Submit Solution</button>
+                            </form>
+                          )
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 )}
-
-                <form onSubmit={(e) => handleSubmit(e, assignment)} style={{ display: assignment.solution ? 'none' : 'block' }}>
-                  <input type="file" onChange={handleFileChange} />
-                  <button type="submit">Submit Solution</button>
-                </form>
               </div>
             ))
           )}

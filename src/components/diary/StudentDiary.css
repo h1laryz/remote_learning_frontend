@@ -1,0 +1,46 @@
+/* StudentDiary.css */
+
+/* Стили для таблицы */
+.assignment-table {
+    width: 80%;
+    margin: auto; /* Центрирование таблицы */
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  /* Стили для ячеек таблицы */
+  .assignment-table th,
+  .assignment-table td {
+    width: 50%; /* Разделение ширины на 50% */
+    border: 1px solid #ccc; /* Серая обводка */
+    padding: 8px;
+  }
+  
+  /* Стили для неопределенных оценок */
+  .undefined-mark {
+    color: #999; /* Серый цвет */
+  }
+
+  
+/* Стили для основного контейнера */
+.diary-container {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  /* Стили для заголовков предметов */
+  .subject-header {
+    cursor: pointer;
+    margin-bottom: 10px;
+    border: 1px solid #ccc; /* Серая обводка */
+    padding: 10px;
+    background-color: #f9f9f9; /* Цвет фона */
+  }
+  
+  /* Стили для ячеек таблицы */
+  .assignment-cell {
+    border: 1px solid #ccc; /* Серая обводка */
+    padding: 8px;
+  }
+  
