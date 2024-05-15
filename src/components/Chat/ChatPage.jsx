@@ -52,7 +52,7 @@ const ChatPage = () => {
           }));
           
           // Сортировка сообщений по времени (новые сверху)
-          const sortedMessages = processedMessages.sort((a, b) => moment(b.timestamp).valueOf() - moment(a.timestamp).valueOf());
+          const sortedMessages = processedMessages.sort((b, a) => moment(b.timestamp).valueOf() - moment(a.timestamp).valueOf());
 
           setMessages(sortedMessages);
         } catch (error) {
@@ -108,7 +108,7 @@ const ChatPage = () => {
             <h2>{activeChat}</h2>
             <div className="messages">
               {messages && messages.map((message, index) => (
-                <div key={index} className={`message ${message.user_id === decodedToken.user_id ? 'own' : 'other'}`}>
+                <div key={index} className={`message ${message.user_id.toString() === decodedToken.user_id ? 'own' : 'other'}`}>
                   <div className="message-info">{moment(message.timestamp).format('YYYY-MM-DD HH:mm:ss')}</div>
                   <div className="message-content">
                     {message.surname} {message.last_name}<br />
