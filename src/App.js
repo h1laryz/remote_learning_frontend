@@ -9,7 +9,7 @@ import AdminPage from './components/admin/AdminPage'
 import StudentHomeworkPage from './components/homework/StudentHomeworkPage';
 import TeacherHomeworkPage from './components/homework/TeacherHomeworkPage';
 import StudentDiary from './components/diary/StudentDiary'
-//import Chat from './components/Chat/Chat';
+import Navigation from './components/navigation/Navigation';
 
 import { useJwt } from "react-jwt";
 
@@ -18,7 +18,7 @@ function App() {
   const [language, setLanguage] = useState('en');
   const [jwtToken, setJwtToken] = useState(localStorage.getItem('jwtToken'));
 
-  //const { decodedToken, isExpired } = useJwt(jwtToken);
+  const { decodedToken, isExpired } = useJwt(jwtToken);
 
   const handleLanguageChange = (event) => {
     setLanguage(event.target.value);
@@ -35,12 +35,12 @@ function App() {
     localStorage.removeItem('jwtToken');
   };
 
-  //if (!decodedToken)
-  //{
-  //  return "Loading...";
-  //}
+  if (!decodedToken)
+  {
+    return "Loading...";
+  }
 
-  //const isTeacher = decodedToken.role === 'teacher';
+  const isTeacher = decodedToken.role === 'teacher';
 
   return (
     <I18nextProvider i18n={i18n}>
@@ -50,14 +50,14 @@ function App() {
             <option value="en">English</option>
             <option value="uk">Українська</option>
           </select>
+          <Navigation jwtToken={jwtToken} />
           <Routes>
             <Route exact path="/" element={jwtToken ? <ChatPage /> : <Navigate to="/login" replace />} />
             <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/admin" element={jwtToken ? <AdminPage /> : <Navigate to="/login" replace />} />
-            {/*<Route path="/assignments" element={isTeacher ? <TeacherHomeworkPage /> : <StudentHomeworkPage/>} /> */}
             <Route path="/diary" element={<StudentDiary />} />
-            {/* <Route path="/chat/:chatId" element={<Chat onLogout={handleLogout} />} /> */} 
+            <Route path="/assignments" element={isTeacher ? <TeacherHomeworkPage/> : <StudentHomeworkPage/>}/>
           </Routes>
         </div>
       </Router>

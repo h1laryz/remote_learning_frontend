@@ -1,0 +1,16 @@
+.navigation {
+    background-color: #333; /* Цвет фона */
+    padding: 10px; /* Внутренний отступ */
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  .navigation-link {
+    color: white; /* Цвет текста */
+    text-decoration: none; /* Убираем подчеркивание ссылок */
+  }
+  
+  .navigation-link:hover {
+    text-decoration: underline; /* Подчеркивание при наведении */
+  }
+  
