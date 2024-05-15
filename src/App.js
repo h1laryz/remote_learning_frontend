@@ -35,12 +35,7 @@ function App() {
     localStorage.removeItem('jwtToken');
   };
 
-  if (!decodedToken)
-  {
-    return "Loading...";
-  }
-
-  const isTeacher = decodedToken.role === 'teacher';
+  const isTeacher = decodedToken?.role === 'teacher';
 
   return (
     <I18nextProvider i18n={i18n}>
@@ -52,12 +47,14 @@ function App() {
           </select>
           <Navigation jwtToken={jwtToken} />
           <Routes>
-            <Route exact path="/" element={jwtToken ? <ChatPage /> : <Navigate to="/login" replace />} />
+            <Route path="/" element={jwtToken ? <ChatPage /> : <Navigate to="/login" replace />} />
             <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/admin" element={jwtToken ? <AdminPage /> : <Navigate to="/login" replace />} />
             <Route path="/diary" element={<StudentDiary />} />
-            <Route path="/assignments" element={isTeacher ? <TeacherHomeworkPage/> : <StudentHomeworkPage/>}/>
+            <Route path="/assignments" element={isTeacher ? <TeacherHomeworkPage /> : <StudentHomeworkPage />} />
+            {/* Redirects */}
+            <Route path="*" element={!jwtToken ? <Navigate to="/login" replace /> : <Navigate to="/" />} />
           </Routes>
         </div>
       </Router>
