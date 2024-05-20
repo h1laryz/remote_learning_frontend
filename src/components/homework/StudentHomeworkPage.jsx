@@ -74,16 +74,15 @@ const StudentHomeworkPage = () => {
         }
       });
 
-      if (response.ok) {
+      if (response.status === 200) {
         setRequestSuccess(true);
-        const data = await response.json();
-        console.log('Ответ сервера:', data);
+        await fetchSubjects(); // Fetch updated data after successful submission
       } else {
         setRequestSuccess(false);
         if (response.status === 404) {
           setErrorMessage('Not found');
         } else {
-          const errorData = await response.json();
+          const errorData = await response.data;
           setErrorMessage(errorData.error || 'Unknown error');
           console.error('Ошибка:', errorData);
         }
@@ -93,6 +92,23 @@ const StudentHomeworkPage = () => {
       setErrorMessage('Unknown error');
     }
     setMessageVisible(true);
+  };
+
+  const fetchSubjects = async () => {
+    try {
+      const jwtToken = localStorage.getItem('jwtToken');
+
+      const response = await axios.get('http://localhost:8080/v1/subject/assignments/student', {
+        headers: {
+          Authorization: `${jwtToken}`
+        }
+      });
+
+      const groupedSubjects = groupAssignmentsBySubjects(response.data);
+      setSubjects(groupedSubjects);
+    } catch (error) {
+      console.error('Error fetching assignments:', error);
+    }
   };
 
   const handleFileChange = (e) => {
@@ -136,8 +152,8 @@ const StudentHomeworkPage = () => {
                       <div key={assignmentIndex} className="assignment">
                         <h4>{assignment.assignment_name}</h4>
                         <p>Deadline: {assignment.deadline}</p>
-                        <a>{assignment.s3_location}</a>
-                        <p>Solution: {assignment.solution ? assignment.solution.s3_location : 'Not submitted'}</p>
+                        <a href={assignment.s3_location} target="_blank" rel="noreferrer">{assignment.s3_location}</a>
+                        <p>Solution: {assignment.solution ? <a href={assignment.solution.s3_location} target="_blank" rel="noreferrer">{assignment.solution.s3_location}</a> : 'Not submitted'}</p>
                         {assignment.solution ? (
                           <p>Mark: {assignment.solution.mark ? assignment.solution.mark : 'no mark yet'}</p>
                         ) : (
