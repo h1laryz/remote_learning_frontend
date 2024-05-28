@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './StudentDiary.css'
+import './StudentDiary.css';
 
 const StudentDiary = () => {
   const [subjects, setSubjects] = useState({});
@@ -42,10 +42,15 @@ const StudentDiary = () => {
     }, 0);
   };
 
+  const formatDate = (dateTime) => {
+    return dateTime.split(' ')[0]; // Возвращаем только дату, игнорируя время
+  };
+
   const renderAssignmentTable = (assignments) => (
     <table className="assignment-table">
       <thead>
         <tr>
+          <th className="date-column">Дата задания</th>
           <th>Название задания</th>
           <th>Оценка</th>
         </tr>
@@ -53,6 +58,7 @@ const StudentDiary = () => {
       <tbody>
         {assignments.map(assignment => (
           <tr key={assignment.assignment_name}>
+            <td>{formatDate(assignment.assignment_date_time)}</td>
             <td>{assignment.assignment_name}</td>
             <td>{assignment.mark !== undefined ? assignment.mark : <span className="undefined-mark">ще не виставлено</span>}</td>
           </tr>

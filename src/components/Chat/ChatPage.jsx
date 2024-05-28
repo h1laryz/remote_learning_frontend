@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useJwt } from "react-jwt";
 import moment from 'moment';
-import './ChatPage.css'
+import './ChatPage.css';
 
 const BASE_URL = 'http://localhost:8080';
 
@@ -44,13 +44,13 @@ const ChatPage = () => {
             headers: { Authorization: jwtToken }
           });
           console.log('Messages response:', JSON.stringify(response));
-          
+
           // Обработка сообщений и времени
           const processedMessages = response.data.map(message => ({
             ...message,
             timestamp: moment.utc(message.timestamp, 'YYYY-MM-DD HH:mm:ss').local().format('YYYY-MM-DD HH:mm:ss')
           }));
-          
+
           // Сортировка сообщений по времени (новые сверху)
           const sortedMessages = processedMessages.sort((b, a) => moment(b.timestamp).valueOf() - moment(a.timestamp).valueOf());
 
@@ -59,7 +59,7 @@ const ChatPage = () => {
           console.error('Error fetching messages:', error);
         }
       };
-      
+
       fetchMessages();
       interval = setInterval(fetchMessages, 2000);
     } else {
@@ -94,7 +94,7 @@ const ChatPage = () => {
           <div>Loading...</div>
         ) : chatList.length > 0 ? (
           chatList.map(chat => (
-            <div key={chat} onClick={() => setActiveChat(chat)} className={`chat-circle ${chat === activeChat ? 'active' : ''}`}>
+            <div key={chat} onClick={() => setActiveChat(chat)} className={`chat-rectangle ${chat === activeChat ? 'active' : ''}`}>
               {chat}
             </div>
           ))

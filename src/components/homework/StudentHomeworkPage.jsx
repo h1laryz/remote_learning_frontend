@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
-import './StudentHomeworkPage.css'
+import './StudentHomeworkPage.css';
 
 const StudentHomeworkPage = () => {
   const [subjects, setSubjects] = useState([]);
@@ -131,6 +130,31 @@ const StudentHomeworkPage = () => {
     return currentDateTime > deadlineDateTime;
   };
 
+  // Fetch presigned URL for a specific S3 key
+  const fetchPresignedUrl = async (s3Key) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/v1/presigned-url?s3_key=${encodeURIComponent(s3Key)}`, {
+        headers: {
+          Authorization: `${localStorage.getItem('jwtToken')}`
+        }
+      });
+      return response.data.url;
+    } catch (error) {
+      console.error('Error fetching presigned URL:', error);
+      return null;
+    }
+  };
+
+  // Handle file download
+  const handleFileDownload = async (s3Key) => {
+    const presignedUrl = await fetchPresignedUrl(s3Key);
+    if (presignedUrl) {
+      window.open(presignedUrl, '_blank');
+    } else {
+      alert('Failed to generate download link. Please try again later.');
+    }
+  };
+
   return (
     <div className="student-homework-page">
       <h1>Homework Page</h1>
@@ -152,8 +176,8 @@ const StudentHomeworkPage = () => {
                       <div key={assignmentIndex} className="assignment">
                         <h4>{assignment.assignment_name}</h4>
                         <p>Deadline: {assignment.deadline}</p>
-                        <a href={assignment.s3_location} target="_blank" rel="noreferrer">{assignment.s3_location}</a>
-                        <p>Solution: {assignment.solution ? <a href={assignment.solution.s3_location} target="_blank" rel="noreferrer">{assignment.solution.s3_location}</a> : 'Not submitted'}</p>
+                        <button onClick={() => handleFileDownload(assignment.s3_location)}>Download Assignment</button>
+                        <p>Solution: {assignment.solution ? <button onClick={() => handleFileDownload(assignment.solution.s3_location)}>Download Solution</button> : 'Not submitted'}</p>
                         {assignment.solution ? (
                           <p>Mark: {assignment.solution.mark ? assignment.solution.mark : 'no mark yet'}</p>
                         ) : (
@@ -175,6 +199,9 @@ const StudentHomeworkPage = () => {
           )}
         </div>
       )}
+      <div className="message">
+        {messageVisible ? (requestSuccess ? 'Status: Success' : `Status: ${errorMessage}`) : ''}
+      </div>
     </div>
   );
 };

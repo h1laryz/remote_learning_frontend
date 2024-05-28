@@ -163,6 +163,31 @@ const TeacherHomeworkPage = () => {
     });
   };
 
+  // Fetch presigned URL for a specific S3 key
+  const fetchPresignedUrl = async (s3Key) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/v1/presigned-url?s3_key=${encodeURIComponent(s3Key)}`, {
+        headers: {
+          Authorization: `${localStorage.getItem('jwtToken')}`
+        }
+      });
+      return response.data.url;
+    } catch (error) {
+      console.error('Error fetching presigned URL:', error);
+      return null;
+    }
+  };
+
+  // Handle file download
+  const handleFileDownload = async (s3Key) => {
+    const presignedUrl = await fetchPresignedUrl(s3Key);
+    if (presignedUrl) {
+      window.open(presignedUrl, '_blank');
+    } else {
+      alert('Failed to generate download link. Please try again later.');
+    }
+  };
+
   return (
     <div className="teacher-homework-page">
       <h1>Teacher's Assignments Page</h1>
@@ -225,7 +250,9 @@ const TeacherHomeworkPage = () => {
                     <div key={assignment.id} className="assignment">
                       <h3>{assignment.assignment_name}</h3>
                       <p>Deadline: {assignment.deadline}</p>
-                      <a href={assignment.s3_location} target="_blank" rel="noreferrer">Filename: {assignment.s3_location}</a>
+                      <button onClick={() => handleFileDownload(assignment.s3_location)}>
+                        Download Assignment
+                      </button>
                       <h4>Solutions:</h4>
                       {assignment.solutions.length > 0 ? (
                         assignment.solutions.map((solution, i) => {
@@ -234,15 +261,18 @@ const TeacherHomeworkPage = () => {
                             <div key={i} className="solution">
                               <p>Student: {solution.surname} {solution.last_name}</p>
                               <p>
-                                Submitted solution: 
-                                <a href={solution.s3_location} target="_blank" rel="noreferrer"> {solution.s3_location}</a>
+                                <button onClick={() => handleFileDownload(solution.s3_location)}>
+                                  Download Solution
+                                </button>
                               </p>
                               {solution.mark ? (
                                 <p>Mark: {solution.mark}</p>
                               ) : (
                                 <div>
+                                  <label>Mark</label>
                                   <input
                                     type="text"
+                                    placeholder="Input mark"
                                     value={markInputs[uniqueKey] || ''}
                                     onChange={(e) => handleMarkChange(e, uniqueKey)}
                                   />
