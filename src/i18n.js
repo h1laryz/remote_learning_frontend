@@ -47,7 +47,16 @@ const resources = {
       'lectorUsernameOrEmail': "Lector's username or email",
       'subjectName': "Name of subject",
       'subjectGroupName': "Name of subject group",
-      'usernameOrEmailOfPractic': "Practic's Username or Email"
+      'usernameOrEmailOfPractic': "Practic's Username or Email",
+      'nameOfProject': "Campus++",
+      'chat': "Chat",
+      'admin': "Admin's panel",
+      'diary': "Diary",
+      'assignments': "Assignments",
+      'login': "Login",
+      'signUp': "Sign up",
+      'logout': "Logout",
+      'helloWorldChat': "Select a chat to start messaging..."
     }
   },
   uk: {
@@ -95,7 +104,16 @@ const resources = {
       'lectorUsernameOrEmail': "Ім'я користувача або пошти лектора",
       'subjectName': "Назва предмету",
       'subjectGroupName': "Назва групи предмету",
-      'usernameOrEmailOfPractic': "Ім'я користувача або пошта практика"
+      'usernameOrEmailOfPractic': "Ім'я користувача або пошта практика",
+      'nameOfProject': "Кампус++",
+      'chat': "Чат",
+      'admin': "Панель адміністратора",
+      'diary': "Щоденник",
+      'assignments': "Завдання",
+      'login': "Увійти",
+      'signUp': "Зареєструватися",
+      'logout': "Вийти",
+      'helloWorldChat': "Оберіть чат, щоб розпочати спілкування..."
     }
   }
 };

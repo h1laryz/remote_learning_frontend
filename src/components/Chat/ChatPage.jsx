@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useJwt } from "react-jwt";
 import moment from 'moment';
+import { useTranslation } from 'react-i18next';
 import './ChatPage.css';
 
 const BASE_URL = 'http://localhost:8080';
 
 const ChatPage = () => {
+  const { t, i18n } = useTranslation();
   const [chatList, setChatList] = useState([]);
   const [activeChat, setActiveChat] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -129,7 +131,7 @@ const ChatPage = () => {
             <button onClick={sendMessage}>Send</button>
           </div>
         ) : (
-          <div className="no-chat-selected">Select a chat to start messaging</div>
+          <div className="no-chat-selected">{t('helloWorldChat')}</div>
         )}
       </div>
     </div>

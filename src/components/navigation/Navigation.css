@@ -1,16 +1,19 @@
-.navigation {
-    background-color: #333; /* Цвет фона */
-    padding: 10px; /* Внутренний отступ */
-    display: flex;
-    justify-content: space-around;
-  }
-  
-  .navigation-link {
-    color: white; /* Цвет текста */
-    text-decoration: none; /* Убираем подчеркивание ссылок */
-  }
-  
-  .navigation-link:hover {
-    text-decoration: underline; /* Подчеркивание при наведении */
-  }
-  
+/* Navigation.css */
+
+/* Добавляем отступ слева для названия проекта */
+.navbar-brand {
+  margin-left: 20px;
+}
+
+/* Меню выпадает влево */
+.dropdown-menu-left .dropdown-menu {
+  right: 0;
+  left: auto;
+}
+
+/* Темнеет при наведении мыши */
+.nav-link:hover,
+.dropdown-item:hover {
+  background-color: #e0e0e0;
+  color: #000;
+}
