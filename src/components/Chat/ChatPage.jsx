@@ -16,7 +16,6 @@ const ChatPage = () => {
   const [loading, setLoading] = useState(true);
   const { decodedToken } = useJwt(localStorage.getItem('jwtToken'));
 
-  // Получение списка чатов
   useEffect(() => {
     const fetchChatList = async () => {
       try {
@@ -35,7 +34,6 @@ const ChatPage = () => {
     fetchChatList();
   }, []);
 
-  // Получение сообщений для активного чата
   useEffect(() => {
     let interval;
     if (activeChat) {
@@ -47,13 +45,11 @@ const ChatPage = () => {
           });
           console.log('Messages response:', JSON.stringify(response));
 
-          // Обработка сообщений и времени
           const processedMessages = response.data.map(message => ({
             ...message,
             timestamp: moment.utc(message.timestamp, 'YYYY-MM-DD HH:mm:ss').local().format('YYYY-MM-DD HH:mm:ss')
           }));
 
-          // Сортировка сообщений по времени (новые сверху)
           const sortedMessages = processedMessages.sort((b, a) => moment(b.timestamp).valueOf() - moment(a.timestamp).valueOf());
 
           setMessages(sortedMessages);
@@ -72,17 +68,15 @@ const ChatPage = () => {
     return () => clearInterval(interval);
   }, [activeChat]);
 
-  // Отправка сообщения
   const sendMessage = async () => {
     try {
       const jwtToken = localStorage.getItem('jwtToken');
-      const response = await axios.post(`${BASE_URL}/v1/chat/send_message`, {
+      await axios.post(`${BASE_URL}/v1/chat/send_message`, {
         subject_group_name: activeChat,
         content: messageContent
       }, {
         headers: { Authorization: jwtToken }
       });
-      console.log('Send message response:', JSON.stringify(response));
       setMessageContent('');
     } catch (error) {
       console.error('Error sending message:', error);
@@ -90,49 +84,54 @@ const ChatPage = () => {
   };
 
   return (
-    <div className="chat-page">
-      <div className="chat-panel">
-        {loading ? (
-          <div>Loading...</div>
-        ) : chatList.length > 0 ? (
-          chatList.map(chat => (
-            <div key={chat} onClick={() => setActiveChat(chat)} className={`chat-rectangle ${chat === activeChat ? 'active' : ''}`}>
-              {chat}
-            </div>
-          ))
-        ) : (
-          <div>No chats yet. Please wait to be added to a subject group.</div>
-        )}
-      </div>
-      <div className="chat-area">
-        {activeChat ? (
-          <div>
-            <h2>{activeChat}</h2>
-            <div className="messages">
-              {messages && messages.map((message, index) => (
-                <div key={index} className={`message ${message.user_id.toString() === decodedToken.user_id ? 'own' : 'other'}`}>
-                  <div className="message-info">{moment(message.timestamp).format('YYYY-MM-DD HH:mm:ss')}</div>
-                  <div className="message-content">
-                    {message.surname} {message.last_name}<br />
-                    {message.content}
-                  </div>
+    <div className="container-fluid chat-page">
+      <div className="row">
+        <div className="col-md-3 chat-panel">
+          {loading ? (
+            <div>Loading...</div>
+          ) : chatList.length > 0 ? (
+            chatList.map(chat => (
+              <button
+                key={chat}
+                onClick={() => setActiveChat(chat)}
+                className={`btn btn-block ${chat === activeChat ? 'btn-primary active' : 'btn-light'}`}
+              >
+                {chat}
+              </button>
+            ))
+          ) : (
+            <div>No chats yet. Please wait to be added to a subject group.</div>
+          )}
+        </div>
+        <div className="col-md-9 chat-area">
+          <div className="messages">
+            {!activeChat && <div className="hello-world">{t('helloWorldChat')}</div>}
+            {messages && messages.map((message, index) => (
+              <div key={index} className={`message ${message.user_id.toString() === decodedToken.user_id ? 'own' : 'other'}`}>
+                <div className="message-content">
+                  <strong>{message.surname} {message.last_name}</strong><br />
+                  {message.content}
+                  <div className="message-timestamp">{moment(message.timestamp).format('YYYY-MM-DD HH:mm:ss')}</div>
                 </div>
-              ))}
-            </div>
-            <input
-              type="text"
-              value={messageContent}
-              onChange={e => setMessageContent(e.target.value)}
-              onKeyDown={e => {
-                if (e.key === 'Enter') sendMessage();
-              }}
-              placeholder="Type a message..."
-            />
-            <button onClick={sendMessage}>Send</button>
+              </div>
+            ))}
           </div>
-        ) : (
-          <div className="no-chat-selected">{t('helloWorldChat')}</div>
-        )}
+          {activeChat && (
+            <div className="message-input">
+              <input
+                type="text"
+                value={messageContent}
+                onChange={e => setMessageContent(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') sendMessage();
+                }}
+                placeholder="Type a message..."
+                className="form-control"
+              />
+              <button onClick={sendMessage} className="btn btn-primary">Send</button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
