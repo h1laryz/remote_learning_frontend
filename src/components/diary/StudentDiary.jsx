@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Navigation from '../navigation/Navigation';
 import './StudentDiary.css';
 
 const StudentDiary = () => {
@@ -68,23 +69,26 @@ const StudentDiary = () => {
   );
 
   return (
-    <div className="diary-container">
-      {Object.keys(subjects).map(subjectName => (
-        <div key={subjectName} className="subject-container">
-          <h3
-            className="subject-header"
-            onClick={() => toggleSubject(subjectName)}
-          >
-            {subjectName} (Total: {getTotalScore(subjects[subjectName])})
-          </h3>
-          {expandedSubjects[subjectName] && (
-            <div>
-              <hr /> {/* Полоса между таблицами */}
-              {renderAssignmentTable(subjects[subjectName])}
-            </div>
-          )}
-        </div>
-      ))}
+    <div>
+      <Navigation jwtToken={localStorage.getItem('jwtToken')} />
+      <div className="diary-container">
+        {Object.keys(subjects).map(subjectName => (
+          <div key={subjectName} className="subject-container">
+            <h3
+              className="subject-header"
+              onClick={() => toggleSubject(subjectName)}
+            >
+              {subjectName} (Total: {getTotalScore(subjects[subjectName])})
+            </h3>
+            {expandedSubjects[subjectName] && (
+              <div>
+                <hr /> {/* Полоса между таблицами */}
+                {renderAssignmentTable(subjects[subjectName])}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

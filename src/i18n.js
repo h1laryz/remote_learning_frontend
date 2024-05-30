@@ -56,7 +56,10 @@ const resources = {
       'login': "Login",
       'signUp': "Sign up",
       'logout': "Logout",
-      'helloWorldChat': "Select a chat to start messaging..."
+      'helloWorldChat': "Select a chat to start messaging...",
+      'noChatsYet': "No chats yet. Wait until administrator adds you in any subject group...",
+      "chatTypeMsg": "Type a message...",
+      "chatSend": "Send"
     }
   },
   uk: {
@@ -113,7 +116,10 @@ const resources = {
       'login': "Увійти",
       'signUp': "Зареєструватися",
       'logout': "Вийти",
-      'helloWorldChat': "Оберіть чат, щоб розпочати спілкування..."
+      'helloWorldChat': "Оберіть чат, щоб розпочати спілкування...",
+      'noChatsYet': "Чатів ще немає. Зачекайте поки адміністратор додасть вас у групу предмету...",
+      'chatTypeMsg': "Надрукуйте повідомлення...",
+      "chatSend": "Надіслати"
     }
   }
 };

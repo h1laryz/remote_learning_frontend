@@ -3,6 +3,7 @@ import axios from 'axios';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useTranslation } from "react-i18next";
+import Navigation from "../navigation/Navigation"
 
 import './TeacherHomeworkPage.css';
 
@@ -189,110 +190,113 @@ const TeacherHomeworkPage = () => {
   };
 
   return (
-    <div className="teacher-homework-page">
-      <h1>Teacher's Assignments Page</h1>
-      <button onClick={handleAddAssignment}>{isAddingAssignment ? 'Close Form' : 'Add New Assignment'}</button>
-      {isAddingAssignment && (
-        <div>
-          <h2>Add New Assignment</h2>
-          <form onSubmit={handleSubmit}>
-            <input type="file" name="assignment_file" onChange={handleFileChange} />
-            <DatePicker
-              selected={deadline}
-              onChange={(date) => setDeadline(date)}
-              wrapperClassName="datePicker"
-              showTimeSelect
-              dateFormat="MMMM d, yyyy h:mm aa"
-              placeholderText={t('deadline')}
-              locale={i18n.language}
-            />
-            <input type="text" name="subject_group_name" placeholder="Subject Group Name" value={newAssignmentData.subject_group_name} onChange={handleInputChange} />
-            <input type="text" name="subject_name" placeholder="Subject Name" value={newAssignmentData.subject_name} onChange={handleInputChange} />
-            <input type="text" name="assignment_name" placeholder="Assignment Name" value={newAssignmentData.assignment_name} onChange={handleInputChange} />
-            <button type="submit">Submit</button>
-          </form>
+    <div>
+      <Navigation jwtToken={localStorage.getItem('jwtToken')} />
+      <div className="teacher-homework-page">
+        <h1>Teacher's Assignments Page</h1>
+        <button onClick={handleAddAssignment}>{isAddingAssignment ? 'Close Form' : 'Add New Assignment'}</button>
+        {isAddingAssignment && (
+          <div>
+            <h2>Add New Assignment</h2>
+            <form onSubmit={handleSubmit}>
+              <input type="file" name="assignment_file" onChange={handleFileChange} />
+              <DatePicker
+                selected={deadline}
+                onChange={(date) => setDeadline(date)}
+                wrapperClassName="datePicker"
+                showTimeSelect
+                dateFormat="MMMM d, yyyy h:mm aa"
+                placeholderText={t('deadline')}
+                locale={i18n.language}
+              />
+              <input type="text" name="subject_group_name" placeholder="Subject Group Name" value={newAssignmentData.subject_group_name} onChange={handleInputChange} />
+              <input type="text" name="subject_name" placeholder="Subject Name" value={newAssignmentData.subject_name} onChange={handleInputChange} />
+              <input type="text" name="assignment_name" placeholder="Assignment Name" value={newAssignmentData.assignment_name} onChange={handleInputChange} />
+              <button type="submit">Submit</button>
+            </form>
+          </div>
+        )}
+        <div className="message">
+          {messageVisible ? (requestSuccess ? 'Status: Success' : `Status: ${errorMessage}`) : ''}
         </div>
-      )}
-      <div className="message">
-        {messageVisible ? (requestSuccess ? 'Status: Success' : `Status: ${errorMessage}`) : ''}
+        {isLoading ? (
+          <p>Loading...</p>
+        ) : (
+          <div>
+            {assignments.length === 0 ? (
+              <p>No assignments available</p>
+            ) : (
+              Object.values(assignments.reduce((acc, assignment) => {
+                const key = `${assignment.subject_name}-${assignment.subject_group_name}`;
+                if (!acc[key]) {
+                  acc[key] = [];
+                }
+                acc[key].push(assignment);
+                return acc;
+              }, {})).map((groupedAssignments) => (
+                <div key={groupedAssignments[0].subject_name + '-' + groupedAssignments[0].subject_group_name} className="subject-group">
+                  <h2 onClick={() => toggleSubject(groupedAssignments[0].subject_name)}>
+                    {groupedAssignments[0].subject_name} - {groupedAssignments[0].subject_group_name}
+                  </h2>
+                  {expandedSubjects[groupedAssignments[0].subject_name] && (
+                    groupedAssignments.sort((a, b) => {
+                      if (a.solutions && a.solutions.length > 0 && b.solutions && b.solutions.length > 0) {
+                        return b.solutions[0].mark - a.solutions[0].mark;
+                      } else if (a.solutions && a.solutions.length > 0) {
+                        return 1;
+                      } else if (b.solutions && b.solutions.length > 0) {
+                        return -1;
+                      } else {
+                        return 0;
+                      }
+                    }).map((assignment) => (
+                      <div key={assignment.id} className="assignment">
+                        <h3>{assignment.assignment_name}</h3>
+                        <p>Deadline: {assignment.deadline}</p>
+                        <button onClick={() => handleFileDownload(assignment.s3_location)}>
+                          Download Assignment
+                        </button>
+                        <h4>Solutions:</h4>
+                        {assignment.solutions.length > 0 ? (
+                          assignment.solutions.map((solution, i) => {
+                            const uniqueKey = `${assignment.id}-${solution.id}`;
+                            return (
+                              <div key={i} className="solution">
+                                <p>Student: {solution.surname} {solution.last_name}</p>
+                                <p>
+                                  <button onClick={() => handleFileDownload(solution.s3_location)}>
+                                    Download Solution
+                                  </button>
+                                </p>
+                                {solution.mark ? (
+                                  <p>Mark: {solution.mark}</p>
+                                ) : (
+                                  <div>
+                                    <label>Mark</label>
+                                    <input
+                                      type="text"
+                                      placeholder="Input mark"
+                                      value={markInputs[uniqueKey] || ''}
+                                      onChange={(e) => handleMarkChange(e, uniqueKey)}
+                                    />
+                                    <button onClick={() => handleMarkSubmit(assignment.id, solution.id, solution.s3_location)}>Submit Mark</button>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })
+                        ) : (
+                          <p>No solutions available</p>
+                        )}
+                      </div>
+                    ))
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        )}
       </div>
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : (
-        <div>
-          {assignments.length === 0 ? (
-            <p>No assignments available</p>
-          ) : (
-            Object.values(assignments.reduce((acc, assignment) => {
-              const key = `${assignment.subject_name}-${assignment.subject_group_name}`;
-              if (!acc[key]) {
-                acc[key] = [];
-              }
-              acc[key].push(assignment);
-              return acc;
-            }, {})).map((groupedAssignments) => (
-              <div key={groupedAssignments[0].subject_name + '-' + groupedAssignments[0].subject_group_name} className="subject-group">
-                <h2 onClick={() => toggleSubject(groupedAssignments[0].subject_name)}>
-                  {groupedAssignments[0].subject_name} - {groupedAssignments[0].subject_group_name}
-                </h2>
-                {expandedSubjects[groupedAssignments[0].subject_name] && (
-                  groupedAssignments.sort((a, b) => {
-                    if (a.solutions && a.solutions.length > 0 && b.solutions && b.solutions.length > 0) {
-                      return b.solutions[0].mark - a.solutions[0].mark;
-                    } else if (a.solutions && a.solutions.length > 0) {
-                      return 1;
-                    } else if (b.solutions && b.solutions.length > 0) {
-                      return -1;
-                    } else {
-                      return 0;
-                    }
-                  }).map((assignment) => (
-                    <div key={assignment.id} className="assignment">
-                      <h3>{assignment.assignment_name}</h3>
-                      <p>Deadline: {assignment.deadline}</p>
-                      <button onClick={() => handleFileDownload(assignment.s3_location)}>
-                        Download Assignment
-                      </button>
-                      <h4>Solutions:</h4>
-                      {assignment.solutions.length > 0 ? (
-                        assignment.solutions.map((solution, i) => {
-                          const uniqueKey = `${assignment.id}-${solution.id}`;
-                          return (
-                            <div key={i} className="solution">
-                              <p>Student: {solution.surname} {solution.last_name}</p>
-                              <p>
-                                <button onClick={() => handleFileDownload(solution.s3_location)}>
-                                  Download Solution
-                                </button>
-                              </p>
-                              {solution.mark ? (
-                                <p>Mark: {solution.mark}</p>
-                              ) : (
-                                <div>
-                                  <label>Mark</label>
-                                  <input
-                                    type="text"
-                                    placeholder="Input mark"
-                                    value={markInputs[uniqueKey] || ''}
-                                    onChange={(e) => handleMarkChange(e, uniqueKey)}
-                                  />
-                                  <button onClick={() => handleMarkSubmit(assignment.id, solution.id, solution.s3_location)}>Submit Mark</button>
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })
-                      ) : (
-                        <p>No solutions available</p>
-                      )}
-                    </div>
-                  ))
-                )}
-              </div>
-            ))
-          )}
-        </div>
-      )}
     </div>
   );
 };

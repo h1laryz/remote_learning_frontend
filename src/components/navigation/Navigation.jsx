@@ -35,8 +35,8 @@ const Navigation = ({ jwtToken }) => {
         <Nav className="me-auto">
           <Nav.Link as={Link} to="/">{t('chat')}</Nav.Link>
           { role && role === 'admin' && <Nav.Link as={Link} to="/admin">{t('admin')}</Nav.Link>}
-          <Nav.Link as={Link} to="/diary">{t('diary')}</Nav.Link>
-          <Nav.Link as={Link} to="/assignments">{t('assignments')}</Nav.Link>
+          { role && role === 'student' && <Nav.Link as={Link} to="/diary">{t('diary')}</Nav.Link> }
+          { role && (role === 'teacher' || role === 'student') && <Nav.Link as={Link} to="/assignments">{t('assignments')}</Nav.Link> }
         </Nav>
         <Nav className="ms-auto">
           <NavDropdown title={<i className="bi bi-globe"></i>} id="language-nav-dropdown" className="dropdown-menu-left">

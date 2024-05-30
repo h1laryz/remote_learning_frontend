@@ -43,7 +43,6 @@ function App() {
     <I18nextProvider i18n={i18n}>
       <Router>
         <div>
-          <Navigation jwtToken={jwtToken} />
           <Routes>
             <Route path="/" element={jwtToken ? <ChatPage /> : <Navigate to="/login" replace />} />
             <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Navigation from "../navigation/Navigation"
 import './StudentHomeworkPage.css';
 
 const StudentHomeworkPage = () => {
@@ -156,51 +157,54 @@ const StudentHomeworkPage = () => {
   };
 
   return (
-    <div className="student-homework-page">
-      <h1>Homework Page</h1>
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : (
-        <div>
-          {subjects.length === 0 ? (
-            <p>No assignments available</p>
-          ) : (
-            subjects.map((subject, index) => (
-              <div key={index} className="subject">
-                <h2 onClick={() => toggleSubject(subject.subject_name)}>
-                  {subject.subject_name}
-                </h2>
-                {expandedSubjects.has(subject.subject_name) && (
-                  <div>
-                    {subject.assignments.map((assignment, assignmentIndex) => (
-                      <div key={assignmentIndex} className="assignment">
-                        <h4>{assignment.assignment_name}</h4>
-                        <p>Deadline: {assignment.deadline}</p>
-                        <button onClick={() => handleFileDownload(assignment.s3_location)}>Download Assignment</button>
-                        <p>Solution: {assignment.solution ? <button onClick={() => handleFileDownload(assignment.solution.s3_location)}>Download Solution</button> : 'Not submitted'}</p>
-                        {assignment.solution ? (
-                          <p>Mark: {assignment.solution.mark ? assignment.solution.mark : 'no mark yet'}</p>
-                        ) : (
-                          isDeadlineExpired(assignment.deadline) ? (
-                            <p>Deadline expired</p>
+    <div>
+      <Navigation jwtToken={localStorage.getItem('jwtToken')} />
+      <div className="student-homework-page">
+        <h1>Homework Page</h1>
+        {isLoading ? (
+          <p>Loading...</p>
+        ) : (
+          <div>
+            {subjects.length === 0 ? (
+              <p>No assignments available</p>
+            ) : (
+              subjects.map((subject, index) => (
+                <div key={index} className="subject">
+                  <h2 onClick={() => toggleSubject(subject.subject_name)}>
+                    {subject.subject_name}
+                  </h2>
+                  {expandedSubjects.has(subject.subject_name) && (
+                    <div>
+                      {subject.assignments.map((assignment, assignmentIndex) => (
+                        <div key={assignmentIndex} className="assignment">
+                          <h4>{assignment.assignment_name}</h4>
+                          <p>Deadline: {assignment.deadline}</p>
+                          <button onClick={() => handleFileDownload(assignment.s3_location)}>Download Assignment</button>
+                          <p>Solution: {assignment.solution ? <button onClick={() => handleFileDownload(assignment.solution.s3_location)}>Download Solution</button> : 'Not submitted'}</p>
+                          {assignment.solution ? (
+                            <p>Mark: {assignment.solution.mark ? assignment.solution.mark : 'no mark yet'}</p>
                           ) : (
-                            <form onSubmit={(e) => handleSubmit(e, assignment)}>
-                              <input type="file" onChange={handleFileChange} />
-                              <button type="submit">Submit Solution</button>
-                            </form>
-                          )
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))
-          )}
+                            isDeadlineExpired(assignment.deadline) ? (
+                              <p>Deadline expired</p>
+                            ) : (
+                              <form onSubmit={(e) => handleSubmit(e, assignment)}>
+                                <input type="file" onChange={handleFileChange} />
+                                <button type="submit">Submit Solution</button>
+                              </form>
+                            )
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        )}
+        <div className="message">
+          {messageVisible ? (requestSuccess ? 'Status: Success' : `Status: ${errorMessage}`) : ''}
         </div>
-      )}
-      <div className="message">
-        {messageVisible ? (requestSuccess ? 'Status: Success' : `Status: ${errorMessage}`) : ''}
       </div>
     </div>
   );
