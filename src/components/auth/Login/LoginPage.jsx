@@ -6,7 +6,7 @@ import LoginForm from './Form/LoginForm';
 const LoginPage = ({ onLogin }) => {
   const navigate = useNavigate(); // Инициализируем useNavigate
 
-  const handleLogin = (jwtToken) => {
+  const HandleLogin = (jwtToken) => {
     onLogin(jwtToken); // Вызываем функцию onLogin из App.js
     navigate('/'); // Перенаправляем на основную страницу
   };
@@ -14,7 +14,7 @@ const LoginPage = ({ onLogin }) => {
   return (
     <div>
       <LoginHeader />
-      <LoginForm onLogin={handleLogin} /> {/* Передаем handleLogin в LoginForm */}
+      <LoginForm onLogin={HandleLogin} /> {/* Передаем handleLogin в LoginForm */}
     </div>
   );
 };

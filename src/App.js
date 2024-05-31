@@ -11,7 +11,6 @@ import AdminPage from './components/admin/AdminPage'
 import StudentHomeworkPage from './components/homework/StudentHomeworkPage';
 import TeacherHomeworkPage from './components/homework/TeacherHomeworkPage';
 import StudentDiary from './components/diary/StudentDiary'
-import Navigation from './components/navigation/Navigation';
 import { useJwt } from "react-jwt";
 
 function App() {

@@ -47,8 +47,11 @@
 }
 
 .message.own .message-content {
-  background-color: #d1ffd1;
   margin-left: auto;
+}
+
+.message.other .message-content {
+  background-color: #dedede;
 }
 
 .message-timestamp {
@@ -79,4 +82,8 @@ button {
 
 button:hover {
   background-color: #0056b3;
+}
+
+.row {
+  height: 890px;
 }
