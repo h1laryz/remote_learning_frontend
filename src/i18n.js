@@ -59,7 +59,13 @@ const resources = {
       'helloWorldChat': "Select a chat to start messaging...",
       'noChatsYet': "No chats yet. Wait until administrator adds you in any subject group...",
       "chatTypeMsg": "Type a message...",
-      "chatSend": "Send"
+      "chatSend": "Send",
+      "teacherAssignmentPage": "Teacher's Assignments Page",
+      "addNewAssignment": "Add New Assignment",
+      "subjectGroupName": "Subject Group Name",
+      "assignmentName": "Assignment name",
+      "deadline": "Deadline",
+      "chooseFile": "Choose a file"
     }
   },
   uk: {
@@ -119,7 +125,13 @@ const resources = {
       'helloWorldChat': "Оберіть чат, щоб розпочати спілкування...",
       'noChatsYet': "Чатів ще немає. Зачекайте поки адміністратор додасть вас у групу предмету...",
       'chatTypeMsg': "Надрукуйте повідомлення...",
-      "chatSend": "Надіслати"
+      "chatSend": "Надіслати",
+      "teacherAssignmentPage": "Сторінка завдань",
+      "addNewAssignment": "Додати нове завдання",
+      "subjectGroupName": "Назва групи предмету",
+      "assignmentName": "Назва завдання",
+      "deadline": "Дедлайн",
+      "chooseFile": "Оберіть файл"
     }
   }
 };

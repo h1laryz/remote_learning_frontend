@@ -197,13 +197,20 @@ const TeacherHomeworkPage = () => {
       </Helmet>
       <Navigation jwtToken={localStorage.getItem('jwtToken')} />
       <div className="teacher-homework-page">
-        <h1>Teacher's Assignments Page</h1>
-        <button onClick={handleAddAssignment}>{isAddingAssignment ? 'Close Form' : 'Add New Assignment'}</button>
+        <h1>{t('teacherAssignmentPage')}</h1>
+        {!isAddingAssignment &&<button className='btn btn-outline-primary' onClick={handleAddAssignment}>{t('addNewAssignment')}</button>}
         {isAddingAssignment && (
-          <div>
-            <h2>Add New Assignment</h2>
+          <div className='card'>
+            <div className="card-body">
+            <h2 className='card-title'>{t('addNewAssignment')}
+            {isAddingAssignment && <button onClick={handleAddAssignment} type="button" class="btn btn-outline-dark btn-sm">X</button>}
+            </h2>
             <form onSubmit={handleSubmit}>
-              <input type="file" name="assignment_file" onChange={handleFileChange} />
+              <div className="subject">
+                <input type="text" name="subject_group_name" placeholder={t('subjectGroupName')} value={newAssignmentData.subject_group_name} onChange={handleInputChange} />
+                <input type="text" name="subject_name" placeholder={t('subjectName')} value={newAssignmentData.subject_name} onChange={handleInputChange} />
+              </div>
+              <input type="text" name="assignment_name" placeholder={t('assignmentName')} value={newAssignmentData.assignment_name} onChange={handleInputChange} />
               <DatePicker
                 selected={deadline}
                 onChange={(date) => setDeadline(date)}
@@ -213,11 +220,10 @@ const TeacherHomeworkPage = () => {
                 placeholderText={t('deadline')}
                 locale={i18n.language}
               />
-              <input type="text" name="subject_group_name" placeholder="Subject Group Name" value={newAssignmentData.subject_group_name} onChange={handleInputChange} />
-              <input type="text" name="subject_name" placeholder="Subject Name" value={newAssignmentData.subject_name} onChange={handleInputChange} />
-              <input type="text" name="assignment_name" placeholder="Assignment Name" value={newAssignmentData.assignment_name} onChange={handleInputChange} />
-              <button type="submit">Submit</button>
+              <input type="file" className="form-control" name="assignment_file" onChange={handleFileChange}></input>
+              <button className='btn btn-outline-success' type="submit">Submit</button>
             </form>
+            </div>
           </div>
         )}
         <div className="message">

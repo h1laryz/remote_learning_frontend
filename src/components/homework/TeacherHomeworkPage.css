@@ -6,11 +6,18 @@
     background-color: #f8f9fa;
   }
   
-  h1 {
+  .teacher-homework-page h1 {
     text-align: center;
-    color: #007bff;
+    color: black;
   }
-  
+  .subject{
+    display: flex;
+
+  }
+
+  .subject [name="subject_group_name"]{
+    margin-right: 15px;
+  }
   .subject-group {
     margin-bottom: 20px;
   }
@@ -84,7 +91,7 @@
   
   .datePicker {
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: 4px;
   }
   
   a {
@@ -96,3 +103,13 @@
     color: #0056b3;
   }
   
+  .card-title{
+    display: flex;
+  }
+
+  .card-title .btn{
+    position: absolute;
+    width: 27px;
+    right: 20px;
+    margin-top: 0;
+  }
