@@ -4,6 +4,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useTranslation } from "react-i18next";
 import Navigation from "../navigation/Navigation"
+import { Helmet } from 'react-helmet';
 
 import './TeacherHomeworkPage.css';
 
@@ -191,6 +192,9 @@ const TeacherHomeworkPage = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>{t("nameOfProject")} | {t("assignments")}</title>
+      </Helmet>
       <Navigation jwtToken={localStorage.getItem('jwtToken')} />
       <div className="teacher-homework-page">
         <h1>Teacher's Assignments Page</h1>

@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Navigation from "../navigation/Navigation"
+import { Helmet } from 'react-helmet';
 import './StudentHomeworkPage.css';
+import { useTranslation } from 'react-i18next';
 
 const StudentHomeworkPage = () => {
+  const {t} = useTranslation();
   const [subjects, setSubjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [file, setFile] = useState(null);
@@ -158,6 +161,9 @@ const StudentHomeworkPage = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>{t("nameOfProject")} | {t("assignments")}</title>
+      </Helmet>
       <Navigation jwtToken={localStorage.getItem('jwtToken')} />
       <div className="student-homework-page">
         <h1>Homework Page</h1>

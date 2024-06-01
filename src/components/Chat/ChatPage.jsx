@@ -4,6 +4,7 @@ import { useJwt } from "react-jwt";
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import Navigation from '../navigation/Navigation';
+import { Helmet } from 'react-helmet';
 import './ChatPage.css';
 
 const BASE_URL = 'http://localhost:8080';
@@ -92,6 +93,10 @@ const ChatPage = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>{t("nameOfProject")} | {t("chat")}</title>
+      </Helmet>
+
       <Navigation jwtToken={localStorage.getItem('jwtToken')} />
       <div className="container-fluid chat-page">
         <div className="row">

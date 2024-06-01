@@ -14,6 +14,7 @@ import AddUniversityForm from './forms/AddUniversityForm';
 import Navigation from '../navigation/Navigation';
 import { useTranslation } from 'react-i18next';
 import { useJwt } from "react-jwt";
+import { Helmet } from 'react-helmet';
 
 import './AdminPage.css'
 
@@ -118,6 +119,7 @@ const AdminPage = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('jwtToken')
         },
         body: JSON.stringify(departmentFormData),
       });
@@ -155,6 +157,7 @@ const AdminPage = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('jwtToken')
         },
         body: JSON.stringify(groupFormData),
       });
@@ -191,6 +194,7 @@ const AdminPage = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('jwtToken')
         },
         body: JSON.stringify(facultyFormData),
       });
@@ -227,6 +231,7 @@ const AdminPage = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('jwtToken')
         },
         body: JSON.stringify(studentFormData),
       });
@@ -263,6 +268,7 @@ const AdminPage = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('jwtToken')
         },
         body: JSON.stringify(studentToGroupFormData),
       });
@@ -299,6 +305,7 @@ const AdminPage = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('jwtToken')
         },
         body: JSON.stringify(subjectToDepartmentFormData),
       });
@@ -335,6 +342,7 @@ const AdminPage = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('jwtToken')
         },
         body: JSON.stringify(subjectGroupFormData),
       });
@@ -371,6 +379,7 @@ const AdminPage = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('jwtToken')
         },
         body: JSON.stringify(subjectGroupToDepartmentGroupFormData),
       });
@@ -407,6 +416,7 @@ const AdminPage = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('jwtToken')
         },
         body: JSON.stringify(teacherFormData),
       });
@@ -443,6 +453,7 @@ const AdminPage = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('jwtToken')
         },
         body: JSON.stringify(teacherToFacultyFormData),
       });
@@ -479,6 +490,7 @@ const AdminPage = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('jwtToken')
         },
         body: JSON.stringify(teacherRankFormData),
       });
@@ -619,6 +631,10 @@ const AdminPage = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>{t("nameOfProject")} | {t("admin")}</title>
+      </Helmet>
+
       <Navigation jwtToken={localStorage.getItem('jwtToken')} />
       <div className='AdminPage'>
         <h2>{t('adminPage')}</h2>
