@@ -1,0 +1,14 @@
+services:
+  frontend:
+      container_name: remote-learning-frontend
+      build:
+        dockerfile: ./Dockerfile
+      privileged: true
+      volumes:
+        - .:/app:rw
+      ports:
+        - "3000:3000"
+      working_dir: /app
+      entrypoint:
+        - ./start_frontend.sh
+      

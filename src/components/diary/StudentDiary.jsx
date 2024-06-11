@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navigation from '../navigation/Navigation';
 import './StudentDiary.css';
+import { t } from 'i18next';
 
 const StudentDiary = () => {
   const [subjects, setSubjects] = useState({});
@@ -44,16 +45,16 @@ const StudentDiary = () => {
   };
 
   const formatDate = (dateTime) => {
-    return dateTime.split(' ')[0]; // Возвращаем только дату, игнорируя время
+    return dateTime ? dateTime.split(' ')[0] : ''; // Возвращаем только дату, игнорируя время
   };
 
   const renderAssignmentTable = (assignments) => (
     <table className="assignment-table">
       <thead>
         <tr>
-          <th className="date-column">Дата задания</th>
-          <th>Название задания</th>
-          <th>Оценка</th>
+          <th className="date-column">{t('date')}</th>
+          <th>{t('nameOfAssignment')}</th>
+          <th>{t('mark')}</th>
         </tr>
       </thead>
       <tbody>
@@ -83,7 +84,9 @@ const StudentDiary = () => {
             {expandedSubjects[subjectName] && (
               <div>
                 <hr /> {/* Полоса между таблицами */}
-                {renderAssignmentTable(subjects[subjectName])}
+                {subjects[subjectName] && subjects[subjectName].length > 0
+                  ? renderAssignmentTable(subjects[subjectName])
+                  : <p>No assignments available</p>}
               </div>
             )}
           </div>

@@ -5,6 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useTranslation } from "react-i18next";
 import Navigation from "../navigation/Navigation"
 import { Helmet } from 'react-helmet';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import './TeacherHomeworkPage.css';
 
@@ -25,6 +26,7 @@ const TeacherHomeworkPage = () => {
   const [isAddingAssignment, setIsAddingAssignment] = useState(false);
   const [expandedSubjects, setExpandedSubjects] = useState({});
   const [expandedGroups, setExpandedGroups] = useState({});
+  const [expandedAssignments, setExpandedAssignments] = useState({});
 
   const { t, i18n } = useTranslation();
 
@@ -90,6 +92,17 @@ const TeacherHomeworkPage = () => {
         }
       });
 
+      const formatDeadline = (deadline) => {
+        let date = new Date(deadline);
+        let year = date.getFullYear();
+        let month = String(date.getMonth() + 1).padStart(2, '0');
+        let day = String(date.getDate()).padStart(2, '0');
+        let hours = String(date.getHours()).padStart(2, '0');
+        let minutes = String(date.getMinutes()).padStart(2, '0');
+        let seconds = String(date.getSeconds()).padStart(2, '0');
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      };
+      
       if (response.status === 200) {
         setRequestSuccess(true);
         const newAssignment = response.data;
@@ -98,7 +111,7 @@ const TeacherHomeworkPage = () => {
           assignment_name: newAssignmentData.assignment_name,
           subject_name: newAssignmentData.subject_name,
           subject_group_name: newAssignmentData.subject_group_name,
-          deadline: deadline.toISOString(),
+          deadline: formatDeadline(deadline.toISOString()),
           s3_location: newAssignment.s3_location,
           solutions: []
         };
@@ -165,6 +178,20 @@ const TeacherHomeworkPage = () => {
     });
   };
 
+  const toggleGroup = (subjectName, groupName) => {
+    setExpandedGroups({
+      ...expandedGroups,
+      [subjectName + '-' + groupName]: !expandedGroups[subjectName + '-' + groupName]
+    });
+  };
+
+  const toggleAssignment = (assignmentId) => {
+    setExpandedAssignments({
+      ...expandedAssignments,
+      [assignmentId]: !expandedAssignments[assignmentId]
+    });
+  };
+
   // Fetch presigned URL for a specific S3 key
   const fetchPresignedUrl = async (s3Key) => {
     try {
@@ -198,31 +225,31 @@ const TeacherHomeworkPage = () => {
       <Navigation jwtToken={localStorage.getItem('jwtToken')} />
       <div className="teacher-homework-page">
         <h1>{t('teacherAssignmentPage')}</h1>
-        {!isAddingAssignment &&<button className='btn btn-outline-primary' onClick={handleAddAssignment}>{t('addNewAssignment')}</button>}
+        {!isAddingAssignment && <button className='btn btn-outline-primary' onClick={handleAddAssignment}>{t('addNewAssignment')}</button>}
         {isAddingAssignment && (
           <div className='card'>
             <div className="card-body">
-            <h2 className='card-title'>{t('addNewAssignment')}
-            {isAddingAssignment && <button onClick={handleAddAssignment} type="button" class="btn btn-outline-dark btn-sm">X</button>}
-            </h2>
-            <form onSubmit={handleSubmit}>
-              <div className="subject">
-                <input type="text" name="subject_group_name" placeholder={t('subjectGroupName')} value={newAssignmentData.subject_group_name} onChange={handleInputChange} />
-                <input type="text" name="subject_name" placeholder={t('subjectName')} value={newAssignmentData.subject_name} onChange={handleInputChange} />
-              </div>
-              <input type="text" name="assignment_name" placeholder={t('assignmentName')} value={newAssignmentData.assignment_name} onChange={handleInputChange} />
-              <DatePicker
-                selected={deadline}
-                onChange={(date) => setDeadline(date)}
-                wrapperClassName="datePicker"
-                showTimeSelect
-                dateFormat="MMMM d, yyyy h:mm aa"
-                placeholderText={t('deadline')}
-                locale={i18n.language}
-              />
-              <input type="file" className="form-control" name="assignment_file" onChange={handleFileChange}></input>
-              <button className='btn btn-outline-success' type="submit">Submit</button>
-            </form>
+              <h2 className='card-title'>{t('addNewAssignment')}
+                {isAddingAssignment && <button onClick={handleAddAssignment} type="button" className="btn btn-outline-dark btn-sm">X</button>}
+              </h2>
+              <form onSubmit={handleSubmit}>
+                <div className="subject">
+                  <input type="text" name="subject_group_name" placeholder={t('subjectGroupName')} value={newAssignmentData.subject_group_name} onChange={handleInputChange} />
+                  <input type="text" name="subject_name" placeholder={t('subjectName')} value={newAssignmentData.subject_name} onChange={handleInputChange} />
+                </div>
+                <input type="text" name="assignment_name" placeholder={t('assignmentName')} value={newAssignmentData.assignment_name} onChange={handleInputChange} />
+                <DatePicker
+                  selected={deadline}
+                  onChange={(date) => setDeadline(date)}
+                  wrapperClassName="datePicker"
+                  showTimeSelect
+                  dateFormat="MMMM d, yyyy h:mm aa"
+                  placeholderText={t('deadline')}
+                  locale={i18n.language}
+                />
+                <input type="file" className="form-control" name="assignment_file" onChange={handleFileChange}></input>
+                <button className='btn btn-outline-success' type="submit">{t('submit')}</button>
+              </form>
             </div>
           </div>
         )}
@@ -234,7 +261,7 @@ const TeacherHomeworkPage = () => {
         ) : (
           <div>
             {assignments.length === 0 ? (
-              <p>No assignments available</p>
+              <p>{t('noAssignmentsAvailable')}</p>
             ) : (
               Object.values(assignments.reduce((acc, assignment) => {
                 const key = `${assignment.subject_name}-${assignment.subject_group_name}`;
@@ -244,62 +271,71 @@ const TeacherHomeworkPage = () => {
                 acc[key].push(assignment);
                 return acc;
               }, {})).map((groupedAssignments) => (
-                <div key={groupedAssignments[0].subject_name + '-' + groupedAssignments[0].subject_group_name} className="subject-group">
-                  <h2 onClick={() => toggleSubject(groupedAssignments[0].subject_name)}>
-                    {groupedAssignments[0].subject_name} - {groupedAssignments[0].subject_group_name}
-                  </h2>
+                <div key={groupedAssignments[0].subject_name + '-' + groupedAssignments[0].subject_group_name} className="card mb-3">
+                  <div className="card-header clickable" onClick={() => toggleSubject(groupedAssignments[0].subject_name)}>
+                    <h2 className="card-title">{groupedAssignments[0].subject_name}</h2>
+                  </div>
                   {expandedSubjects[groupedAssignments[0].subject_name] && (
-                    groupedAssignments.sort((a, b) => {
-                      if (a.solutions && a.solutions.length > 0 && b.solutions && b.solutions.length > 0) {
-                        return b.solutions[0].mark - a.solutions[0].mark;
-                      } else if (a.solutions && a.solutions.length > 0) {
-                        return 1;
-                      } else if (b.solutions && b.solutions.length > 0) {
-                        return -1;
-                      } else {
-                        return 0;
-                      }
-                    }).map((assignment) => (
-                      <div key={assignment.id} className="assignment">
-                        <h3>{assignment.assignment_name}</h3>
-                        <p>Deadline: {assignment.deadline}</p>
-                        <button onClick={() => handleFileDownload(assignment.s3_location)}>
-                          Download Assignment
-                        </button>
-                        <h4>Solutions:</h4>
-                        {assignment.solutions.length > 0 ? (
-                          assignment.solutions.map((solution, i) => {
-                            const uniqueKey = `${assignment.id}-${solution.id}`;
-                            return (
-                              <div key={i} className="solution">
-                                <p>Student: {solution.surname} {solution.last_name}</p>
-                                <p>
-                                  <button onClick={() => handleFileDownload(solution.s3_location)}>
-                                    Download Solution
-                                  </button>
-                                </p>
-                                {solution.mark ? (
-                                  <p>Mark: {solution.mark}</p>
-                                ) : (
-                                  <div>
-                                    <label>Mark</label>
-                                    <input
-                                      type="text"
-                                      placeholder="Input mark"
-                                      value={markInputs[uniqueKey] || ''}
-                                      onChange={(e) => handleMarkChange(e, uniqueKey)}
-                                    />
-                                    <button onClick={() => handleMarkSubmit(assignment.id, solution.id, solution.s3_location)}>Submit Mark</button>
+                    <div className="card-body">
+                      {groupedAssignments.map((assignment) => (
+                        <div key={assignment.subject_group_name} className="card mb-2">
+                          <div className="card-header clickable" onClick={() => toggleGroup(assignment.subject_name, assignment.subject_group_name)}>
+                            <h3 className="card-title">{assignment.subject_group_name}</h3>
+                          </div>
+                          {expandedGroups[assignment.subject_name + '-' + assignment.subject_group_name] && (
+                            <div className="card-body">
+                              {groupedAssignments.map((assignment) => (
+                                <div key={assignment.id} className="card mb-2">
+                                  <div className="card-header clickable" onClick={() => toggleAssignment(assignment.id)}>
+                                    <h3 className="card-title">{assignment.assignment_name}</h3>
                                   </div>
-                                )}
-                              </div>
-                            );
-                          })
-                        ) : (
-                          <p>No solutions available</p>
-                        )}
-                      </div>
-                    ))
+                                  {expandedAssignments[assignment.id] && (
+                                    <div className="card-body">
+                                      <button className="btn btn-outline-secondary" onClick={() => handleFileDownload(assignment.s3_location)}>
+                                        {t('downloadAssignment')}
+                                      </button>
+                                      <p>{t('deadline')}: {assignment.deadline}</p>
+                                      <h4>{t('solutions')}:</h4>
+                                      {assignment.solutions.length > 0 ? (
+                                        assignment.solutions.map((solution, i) => {
+                                          const uniqueKey = `${assignment.id}-${solution.id}`;
+                                          return (
+                                            <div key={i} className="solution">
+                                              <p>{t('student')}: {solution.surname} {solution.last_name}</p>
+                                              <p>
+                                                <button className="btn btn-outline-secondary" onClick={() => handleFileDownload(solution.s3_location)}>
+                                                  {t('downloadSolution')}
+                                                </button>
+                                              </p>
+                                              {solution.mark ? (
+                                                <p>{t('mark')}: {solution.mark}</p>
+                                              ) : (
+                                                <div>
+                                                  <label>{t('mark')}</label>
+                                                  <input
+                                                    type="text"
+                                                    placeholder="Input mark"
+                                                    value={markInputs[uniqueKey] || ''}
+                                                    onChange={(e) => handleMarkChange(e, uniqueKey)}
+                                                  />
+                                                  <button className="btn btn-outline-success" onClick={() => handleMarkSubmit(assignment.id, solution.id, solution.s3_location)}>{t('submit')}</button>
+                                                </div>
+                                              )}
+                                            </div>
+                                          );
+                                        })
+                                      ) : (
+                                        <p>{t('noSolutionsAvailable')}</p>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   )}
                 </div>
               ))

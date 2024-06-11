@@ -3,22 +3,30 @@ import { useTranslation } from 'react-i18next';
 
 import './Form.css'
 
-const DepartmentForm = ({ onSubmit, onChange, formData }) => {
+const DepartmentForm = ({ onSubmit, onChange, formData, setShowForm }) => {
   const { t } = useTranslation();
 
   return (
-    <form onSubmit={onSubmit}>
-      <h3>{t('createDepartment')}</h3>
-      <div>
-        <label>{t('facultyName')}</label>
-        <input type="text" name="faculty_name" value={formData.faculty_name || ''} onChange={onChange} />
+    <div className='card'>
+      <div className="card-body">
+        <form onSubmit={onSubmit}>
+        <h2 className='card-title'>{t('createDepartment')}
+          <button onClick={() => setShowForm(false)}  type="button" class="btn btn-outline-dark btn-sm">X</button>
+        </h2>
+          <div>
+            <label>{t('facultyName')}</label>
+            <input type="text" name="faculty_name" value={formData.faculty_name || ''} onChange={onChange} 
+            placeholder='fict'/>
+          </div>
+          <div>
+            <label>{t('departmentName')}</label>
+            <input type="text" name="department_name" value={formData.department_name || ''} onChange={onChange} 
+            placeholder='ipi'/>
+          </div>
+          <button className='btn btn-outline-success' type="submit">{t('Submit')}</button>
+        </form>
       </div>
-      <div>
-        <label>{t('departmentName')}</label>
-        <input type="text" name="department_name" value={formData.department_name || ''} onChange={onChange} />
-      </div>
-      <button type="submit" className='submit-button'>Добавить</button>
-    </form>
+    </div>
   );
 };
 

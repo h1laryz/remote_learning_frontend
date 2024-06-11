@@ -637,93 +637,93 @@ const AdminPage = () => {
 
       <Navigation jwtToken={localStorage.getItem('jwtToken')} />
       <div className='AdminPage'>
-        <h2>{t('adminPage')}</h2>
+        <h1>{t('adminPage')}</h1>
         <div className="message">
           {messageVisible ? (requestSuccess ? 'Status: Success' : `Status: ${errorMessage}`) : ''}
         </div>
         <div className='button-matrix'>
-          { level === "full" &&
-            <button onClick={toggleUniversityFormVisibility}>{t('createUniversity')}</button> 
+          { level === "full" && !showUniversityForm && 
+            <button onClick={toggleUniversityFormVisibility} className='btn btn-outline-primary'>{t('createUniversity')}</button> 
           }
           {showUniversityForm && (
-              <AddUniversityForm onSubmit={handleUniversitySubmit} onChange={handleUniversityInputChange} formData={universityFormData} />
+              <AddUniversityForm onSubmit={handleUniversitySubmit} onChange={handleUniversityInputChange} formData={universityFormData} setShowForm={setShowUniversityForm}/>
           )}
 
-          { (level === "full" || level === "faculty") && 
-            <button onClick={toggleFacultyFormVisibility}>{t('createFaculty')}</button>
+          { ((level === "full" || level === "faculty") && !showFacultyForm) && 
+            <button onClick={toggleFacultyFormVisibility} className='btn btn-outline-primary'>{t('createFaculty')}</button>
           }
           {showFacultyForm && (
-              <FacultyForm onSubmit={handleFacultySubmit} onChange={handleFacultyInputChange} formData={facultyFormData} />
+              <FacultyForm onSubmit={handleFacultySubmit} onChange={handleFacultyInputChange} formData={facultyFormData} setShowForm={setShowFacultyForm} />
           )}
           
-          { (level === "full" || level === "faculty" || level === "department") && 
-            <button onClick={toggleDepartmentFormVisibility}>{t('createDepartment')}</button>
+          { ((level === "full" || level === "faculty" || level === "department") && !showDepartmentForm) && 
+            <button onClick={toggleDepartmentFormVisibility} className='btn btn-outline-primary'>{t('createDepartment')}</button>
           }
           {showDepartmentForm && (
-              <DepartmentForm onSubmit={handleDepartmentSubmit} onChange={handleDepartmentInputChange} formData={departmentFormData} />
+              <DepartmentForm onSubmit={handleDepartmentSubmit} onChange={handleDepartmentInputChange} formData={departmentFormData} setShowForm={setShowDepartmentForm}/>
           )}
 
-          { (level === "full" || level === "faculty") && 
-            <button onClick={toggleTeacherRankFormVisibility}>{t('createTeacherRank')}</button>
+          { ((level === "full" || level === "faculty") && !showTeacherRankForm) && 
+            <button onClick={toggleTeacherRankFormVisibility} className='btn btn-outline-primary'>{t('createTeacherRank')} </button>
           }
           {showTeacherRankForm && (
-              <AddTeacherRankForm onSubmit={handleTeacherRankSubmit} onChange={handleTeacherRankInputChange} formData={teacherRankFormData} />
+              <AddTeacherRankForm onSubmit={handleTeacherRankSubmit} onChange={handleTeacherRankInputChange} formData={teacherRankFormData} setShowForm={setShowTeacherRankForm}/>
           )}
 
-          { (level === "full" || level === "faculty") && 
-            <button onClick={toggleTeacherFormVisibility}>{t('addTeacher')}</button>
+          { ((level === "full" || level === "faculty") && !showTeacherForm) && 
+            <button onClick={toggleTeacherFormVisibility} className='btn btn-outline-primary'>{t('addTeacher')}</button>
           }
           {showTeacherForm && (
-              <AddTeacherForm onSubmit={handleTeacherSubmit} onChange={handleTeacherInputChange} formData={teacherFormData} />
+              <AddTeacherForm onSubmit={handleTeacherSubmit} onChange={handleTeacherInputChange} formData={teacherFormData} setShowForm={setShowTeacherForm}/>
           )}
 
-          { (level === "full" || level === "faculty") && 
-            <button onClick={toggleTeacherToFacultyFormVisibility}>{t('addTeacherToFaculty')}</button>
+          { ((level === "full" || level === "faculty") && !showTeacherToFacultyForm) && 
+            <button onClick={toggleTeacherToFacultyFormVisibility} className='btn btn-outline-primary'>{t('addTeacherToFaculty')}</button>
           }
           {showTeacherToFacultyForm && (
-              <AddTeacherToFacultyForm onSubmit={handleTeacherToFacultySubmit} onChange={handleTeacherToFacultyInputChange} formData={teacherToFacultyFormData} />
+              <AddTeacherToFacultyForm onSubmit={handleTeacherToFacultySubmit} onChange={handleTeacherToFacultyInputChange} formData={teacherToFacultyFormData} setShowForm={setTeacherToFacultyFormData}/>
           )}
           
-          { (level === "full" || level === "faculty" || level === "department") && 
-            <button onClick={toggleGroupFormVisibility}>{t('createDepartmentGroup')}</button>
+          { ((level === "full" || level === "faculty" || level === "department") && !showGroupForm) && 
+            <button onClick={toggleGroupFormVisibility} className='btn btn-outline-primary'>{t('createDepartmentGroup')}</button>
           }
           {showGroupForm && (
-              <DepartmentGroupForm onSubmit={handleGroupSubmit} onChange={handleGroupInputChange} formData={groupFormData} />
+              <DepartmentGroupForm onSubmit={handleGroupSubmit} onChange={handleGroupInputChange} formData={groupFormData} setShowForm={setGroupFormData}/>
           )}
 
-          { (level === "full" || level === "faculty" || level === "department") && 
-            <button onClick={toggleStudentFormVisibility}>{t('addStudentToDepartmentGroup')}</button>
+          { ((level === "full" || level === "faculty" || level === "department") && !showStudentForm) && 
+            <button onClick={toggleStudentFormVisibility} className='btn btn-outline-primary'>{t('addStudentToDepartmentGroup')}</button>
           }
           {showStudentForm && (
-              <StudentForm onSubmit={handleStudentSubmit} onChange={handleStudentInputChange} formData={studentFormData} />
+              <StudentForm onSubmit={handleStudentSubmit} onChange={handleStudentInputChange} formData={studentFormData} setShowForm={setStudentFormData}/>
           )}
 
-          { (level === "full" || level === "faculty" || level === "department") && 
-            <button onClick={toggleSubjectToDepartmentFormVisibility}>{t('createSubjectToDepartment')}</button>
+          { ((level === "full" || level === "faculty" || level === "department") && !showSubjectToDepartmentForm) && 
+            <button onClick={toggleSubjectToDepartmentFormVisibility} className='btn btn-outline-primary'>{t('createSubjectToDepartment')}</button>
           }
           {showSubjectToDepartmentForm && (
-              <AddSubjectToDepartmentForm onSubmit={handleSubjectToDepartmentSubmit} onChange={handleSubjectToDepartmentInputChange} formData={subjectToDepartmentFormData} />
+              <AddSubjectToDepartmentForm onSubmit={handleSubjectToDepartmentSubmit} onChange={handleSubjectToDepartmentInputChange} formData={subjectToDepartmentFormData} setShowForm={setSubjectToDepartmentFormData}/>
           )}
 
-          { (level === "full" || level === "faculty" || level === "department") && 
-            <button onClick={toggleSubjectGroupFormVisibility}>{t('createSubjectGroup')}</button>
+          { ((level === "full" || level === "faculty" || level === "department") && !showSubjectGroupForm) && 
+            <button onClick={toggleSubjectGroupFormVisibility} className='btn btn-outline-primary'>{t('createSubjectGroup')}</button>
           }
           {showSubjectGroupForm && (
-              <AddSubjectGroupForm onSubmit={handleSubjectGroupSubmit} onChange={handleSubjectGroupInputChange} formData={subjectGroupFormData} />
+              <AddSubjectGroupForm onSubmit={handleSubjectGroupSubmit} onChange={handleSubjectGroupInputChange} formData={subjectGroupFormData} setShowForm={setSubjectGroupFormData}/>
           )}
 
-          { (level === "full" || level === "faculty" || level === "department") && 
-            <button onClick={toggleStudentToGroupFormVisibility}>{t('addStudentToSubjectGroup')}</button>
+          { ((level === "full" || level === "faculty" || level === "department") && !showStudentToGroupForm) && 
+            <button onClick={toggleStudentToGroupFormVisibility} className='btn btn-outline-primary'>{t('addStudentToSubjectGroup')}</button>
           }
           {showStudentToGroupForm && (
-              <AddStudentToGroupForm onSubmit={handleStudentToGroupSubmit} onChange={handleStudentToGroupInputChange} formData={studentToGroupFormData} />
+              <AddStudentToGroupForm onSubmit={handleStudentToGroupSubmit} onChange={handleStudentToGroupInputChange} formData={studentToGroupFormData} setShowForm={setStudentToGroupFormData}/>
           )}
 
-          { (level === "full" || level === "faculty" || level === "department") && 
-            <button onClick={toggleSubjectGroupToDepartmentGroupFormVisibility}>{t('createSubjectGroupAsDepartmentGroup')}</button>
+          { ((level === "full" || level === "faculty" || level === "department") && !showSubjectGroupToDepartmentGroupForm) && 
+            <button onClick={toggleSubjectGroupToDepartmentGroupFormVisibility} className='btn btn-outline-primary'>{t('createSubjectGroupAsDepartmentGroup')}</button>
           }
           {showSubjectGroupToDepartmentGroupForm && (
-              <AddSubjectGroupToDepartmentGroupForm onSubmit={handleSubjectGroupToDepartmentGroupSubmit} onChange={handleSubjectGroupToDepartmentGroupInputChange} formData={subjectGroupToDepartmentGroupFormData} />
+              <AddSubjectGroupToDepartmentGroupForm onSubmit={handleSubjectGroupToDepartmentGroupSubmit} onChange={handleSubjectGroupToDepartmentGroupInputChange} formData={subjectGroupToDepartmentGroupFormData} setShowForm={setSubjectGroupToDepartmentGroupFormData}/>
           )}
         </div>
       </div>

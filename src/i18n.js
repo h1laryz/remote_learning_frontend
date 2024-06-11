@@ -65,7 +65,19 @@ const resources = {
       "subjectGroupName": "Subject Group Name",
       "assignmentName": "Assignment name",
       "deadline": "Deadline",
-      "chooseFile": "Choose a file"
+      "chooseFile": "Choose a file",
+      "downloadAssignment": "Download assignment",
+      "downloadSolution": "Download solution",
+      "mark": "Mark",
+      "deadlineExpired": "Deadline expired",
+      "notYet": "not yet",
+      'deadline': "deadline",
+      'noAssignmentsAvailable': "No assignments available",
+      'solutions': "Solutions",
+      'student': "student",
+      'noSolutionsAvailable': "No solutions available",
+      'date': "Date",
+      'nameOfAssignment': "Name of assignment"
     }
   },
   uk: {
@@ -131,7 +143,19 @@ const resources = {
       "subjectGroupName": "Назва групи предмету",
       "assignmentName": "Назва завдання",
       "deadline": "Дедлайн",
-      "chooseFile": "Оберіть файл"
+      "chooseFile": "Оберіть файл",
+      "downloadAssignment": "Завантажити завдання",
+      "downloadSolution": "Завантажити рішення",
+      "mark": "Оцінка",
+      "deadlineExpired": "Дедлайн пройшов",
+      "notYet": "ще немає",
+      'deadline': "дедлайн",
+      'noAssignmentsAvailable': "Завдань ще немає",
+      'solutions': "Рішення",
+      'student': "студент",
+      'noSolutionsAvailable': "Рішень ще немає",
+      'date': "Дата",
+      'nameOfAssignment': "Назва завдання"
     }
   }
 };

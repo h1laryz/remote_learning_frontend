@@ -6,11 +6,12 @@ import './StudentHomeworkPage.css';
 import { useTranslation } from 'react-i18next';
 
 const StudentHomeworkPage = () => {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const [subjects, setSubjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [file, setFile] = useState(null);
   const [expandedSubjects, setExpandedSubjects] = useState(new Set());
+  const [expandedAssignments, setExpandedAssignments] = useState(new Set());
 
   const [requestSuccess, setRequestSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -20,14 +21,12 @@ const StudentHomeworkPage = () => {
     const fetchSubjects = async () => {
       try {
         const jwtToken = localStorage.getItem('jwtToken');
-
         const response = await axios.get('http://localhost:8080/v1/subject/assignments/student', {
           headers: {
             Authorization: `${jwtToken}`
           }
         });
 
-        // Группируем задания по предметам
         const groupedSubjects = groupAssignmentsBySubjects(response.data);
         setSubjects(groupedSubjects);
         setIsLoading(false);
@@ -128,6 +127,16 @@ const StudentHomeworkPage = () => {
     setExpandedSubjects(expandedSubjectsCopy);
   };
 
+  const toggleAssignment = (assignmentId) => {
+    const expandedAssignmentsCopy = new Set(expandedAssignments);
+    if (expandedAssignmentsCopy.has(assignmentId)) {
+      expandedAssignmentsCopy.delete(assignmentId);
+    } else {
+      expandedAssignmentsCopy.add(assignmentId);
+    }
+    setExpandedAssignments(expandedAssignmentsCopy);
+  };
+
   const isDeadlineExpired = (deadline) => {
     const currentDateTime = new Date();
     const deadlineDateTime = new Date(deadline);
@@ -175,29 +184,40 @@ const StudentHomeworkPage = () => {
               <p>No assignments available</p>
             ) : (
               subjects.map((subject, index) => (
-                <div key={index} className="subject">
-                  <h2 onClick={() => toggleSubject(subject.subject_name)}>
-                    {subject.subject_name}
-                  </h2>
+                <div key={index} className="card mb-3">
+                  <div className="card-header clickable" onClick={() => toggleSubject(subject.subject_name)}>
+                    <h2 className="card-title">{subject.subject_name}</h2>
+                  </div>
                   {expandedSubjects.has(subject.subject_name) && (
-                    <div>
+                    <div className="card-body">
                       {subject.assignments.map((assignment, assignmentIndex) => (
-                        <div key={assignmentIndex} className="assignment">
-                          <h4>{assignment.assignment_name}</h4>
-                          <p>Deadline: {assignment.deadline}</p>
-                          <button onClick={() => handleFileDownload(assignment.s3_location)}>Download Assignment</button>
-                          <p>Solution: {assignment.solution ? <button onClick={() => handleFileDownload(assignment.solution.s3_location)}>Download Solution</button> : 'Not submitted'}</p>
-                          {assignment.solution ? (
-                            <p>Mark: {assignment.solution.mark ? assignment.solution.mark : 'no mark yet'}</p>
-                          ) : (
-                            isDeadlineExpired(assignment.deadline) ? (
-                              <p>Deadline expired</p>
-                            ) : (
-                              <form onSubmit={(e) => handleSubmit(e, assignment)}>
-                                <input type="file" onChange={handleFileChange} />
-                                <button type="submit">Submit Solution</button>
-                              </form>
-                            )
+                        <div key={assignmentIndex} className="card mb-2">
+                          <div className="card-header clickable" onClick={() => toggleAssignment(assignment.id)}>
+                            <h4 className="card-title">
+                              <div className="assignment-title">
+                                {assignment.assignment_name}                                             {t('deadline')}: {assignment.deadline}
+                              </div>
+                            </h4>
+                          </div>
+                          {expandedAssignments.has(assignment.id) && (
+                            <div className="card-body">
+                              <button className="btn btn-outline-secondary" onClick={() => handleFileDownload(assignment.s3_location)}>
+                                {t('downloadAssignment')}
+                              </button>
+                              <p>{assignment.solution ? <button className="btn btn-outline-secondary" onClick={() => handleFileDownload(assignment.solution.s3_location)}>{t('downloadSolution')}</button> : 'Not submitted'}</p>
+                              {assignment.solution ? (
+                                <p>{t('mark')}: {assignment.solution.mark ? assignment.solution.mark : t('notYet')}</p>
+                              ) : (
+                                isDeadlineExpired(assignment.deadline) ? (
+                                  <p>{t('deadlineExpired')}</p>
+                                ) : (
+                                  <form onSubmit={(e) => handleSubmit(e, assignment)}>
+                                    <input type="file" className="form-control" onChange={handleFileChange}></input>
+                                    <button type="submit" className="btn btn-outline-success">{t('submit')}</button>
+                                  </form>
+                                )
+                              )}
+                            </div>
                           )}
                         </div>
                       ))}
