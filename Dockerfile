@@ -11,7 +11,9 @@ RUN ln -fs /usr/share/zoneinfo/UTC /etc/localtime && \
     dpkg-reconfigure --frontend noninteractive tzdata
 
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
-RUN nvm install node
+
+# Use a single RUN command to source nvm and install node
+RUN /bin/bash -c "source $HOME/.nvm/nvm.sh && nvm install node"
 
 WORKDIR /app
 
