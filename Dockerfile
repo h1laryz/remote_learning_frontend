@@ -10,7 +10,7 @@ RUN ln -fs /usr/share/zoneinfo/UTC /etc/localtime && \
     apt install --quiet --yes --no-install-recommends tzdata && \
     dpkg-reconfigure --frontend noninteractive tzdata
 
-RUN apt-get install -y nodejs npm
+RUN apt-get install -y node npm
 
 COPY package*.json ./
 
