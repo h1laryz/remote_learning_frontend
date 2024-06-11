@@ -17,4 +17,4 @@ jobs:
                 submodules: true
 
           - name: Build
-            run: ./build.sh
+            run: docker compose run --rm frontend ./build.sh
