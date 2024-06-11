@@ -9,6 +9,5 @@ services:
       ports:
         - "3000:3000"
       working_dir: /app
-      entrypoint:
-        - ./start_frontend.sh
+      command: ./start_frontend.sh
       

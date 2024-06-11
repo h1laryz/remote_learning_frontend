@@ -18,3 +18,5 @@ RUN /bin/bash -c "source $HOME/.nvm/nvm.sh && nvm install node"
 WORKDIR /app
 
 EXPOSE "3000"
+
+ENTRYPOINT ["/bin/bash", "-c", "source $HOME/.nvm/nvm.sh && exec \"$@\"", "--"]
