@@ -12,10 +12,6 @@ RUN ln -fs /usr/share/zoneinfo/UTC /etc/localtime && \
 
 RUN apt-get install -y node npm
 
-COPY package*.json ./
-
-RUN npm ci
-
 WORKDIR /app
 
-EXPOSE "8080"
+EXPOSE "3000"
