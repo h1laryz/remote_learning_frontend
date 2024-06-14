@@ -7,8 +7,6 @@ import Navigation from '../navigation/Navigation';
 import { Helmet } from 'react-helmet';
 import './ChatPage.css';
 
-const BASE_URL = 'http://localhost:8080';
-
 const ChatPage = () => {
   const { t, i18n } = useTranslation();
   const [chatList, setChatList] = useState([]);
@@ -23,7 +21,7 @@ const ChatPage = () => {
     const fetchChatList = async () => {
       try {
         const jwtToken = localStorage.getItem('jwtToken');
-        const response = await axios.get(`${BASE_URL}/v1/subject_groups`, {
+        const response = await axios.get(`http://localhost:8080/v1/subject_groups`, {
           headers: { Authorization: jwtToken }
         });
         console.log('Chat list response:', JSON.stringify(response));
@@ -48,7 +46,7 @@ const ChatPage = () => {
       const fetchMessages = async () => {
         try {
           const jwtToken = localStorage.getItem('jwtToken');
-          const response = await axios.get(`${BASE_URL}/v1/chat/messages/${activeChat}`, {
+          const response = await axios.get(`http://localhost:8080/v1/chat/messages/${activeChat}`, {
             headers: { Authorization: jwtToken }
           });
           console.log('Messages response:', JSON.stringify(response));
@@ -79,7 +77,7 @@ const ChatPage = () => {
   const sendMessage = async () => {
     try {
       const jwtToken = localStorage.getItem('jwtToken');
-      await axios.post(`${BASE_URL}/v1/chat/send_message`, {
+      await axios.post(`http://localhost:8080/v1/chat/send_message`, {
         subject_group_name: activeChat,
         content: messageContent
       }, {

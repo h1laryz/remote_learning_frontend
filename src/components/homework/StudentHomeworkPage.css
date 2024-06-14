@@ -54,5 +54,14 @@
 
 .student-homework-page .assignment-title {
   display: flex;
-  white-space-collapse: break-spaces;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.assignment-name {
+  flex-grow: 1;
+}
+
+.assignment-deadline {
+  text-align: right;
 }

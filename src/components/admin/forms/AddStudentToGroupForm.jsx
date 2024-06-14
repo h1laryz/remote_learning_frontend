@@ -10,7 +10,7 @@ const AddStudentToGroupForm = ({ onSubmit, onChange, formData, setShowForm }) =>
     <div className='card'>
       <div className="card-body">
         <form onSubmit={onSubmit}>
-          <h2 className='card-title'>{t('addStudentToDepartmentGroup')}
+          <h2 className='card-title'>{t('addStudentToSubjectGroup')}
             <button onClick={() => setShowForm(false)}  type="button" class="btn btn-outline-dark btn-sm">X</button>
           </h2>
           <div>

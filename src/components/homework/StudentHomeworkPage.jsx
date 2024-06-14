@@ -195,7 +195,8 @@ const StudentHomeworkPage = () => {
                           <div className="card-header clickable" onClick={() => toggleAssignment(assignment.id)}>
                             <h4 className="card-title">
                               <div className="assignment-title">
-                                {assignment.assignment_name}                                             {t('deadline')}: {assignment.deadline}
+                                <span className="assignment-name">{assignment.assignment_name}</span>
+                                <span className="assignment-deadline">{t('deadline')}: {assignment.deadline}</span>
                               </div>
                             </h4>
                           </div>
