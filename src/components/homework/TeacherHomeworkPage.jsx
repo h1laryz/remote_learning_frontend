@@ -3,7 +3,7 @@ import axios from 'axios';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useTranslation } from "react-i18next";
-import Navigation from "../navigation/Navigation"
+import Navigation from "../navigation/Navigation";
 import { Helmet } from 'react-helmet';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -143,8 +143,8 @@ const TeacherHomeworkPage = () => {
     });
   };
 
-  const handleMarkSubmit = async (assignmentId, solutionId, s3Location) => {
-    const uniqueKey = `${assignmentId}-${solutionId}`;
+  const handleMarkSubmit = async (assignmentName, s3Location) => {
+    const uniqueKey = `${assignmentName}-${s3Location}`;
     const mark = markInputs[uniqueKey];
     if (!mark || isNaN(mark) || parseInt(mark) < 0) {
       alert('Please enter a valid positive number for the mark.');
@@ -277,14 +277,21 @@ const TeacherHomeworkPage = () => {
                   </div>
                   {expandedSubjects[groupedAssignments[0].subject_name] && (
                     <div className="card-body">
-                      {groupedAssignments.map((assignment) => (
-                        <div key={assignment.subject_group_name} className="card mb-2">
-                          <div className="card-header clickable" onClick={() => toggleGroup(assignment.subject_name, assignment.subject_group_name)}>
-                            <h3 className="card-title">{assignment.subject_group_name}</h3>
+                      {Object.values(groupedAssignments.reduce((groupAcc, assignment) => {
+                        const groupKey = assignment.subject_group_name;
+                        if (!groupAcc[groupKey]) {
+                          groupAcc[groupKey] = [];
+                        }
+                        groupAcc[groupKey].push(assignment);
+                        return groupAcc;
+                      }, {})).map((groupAssignments) => (
+                        <div key={groupAssignments[0].subject_group_name} className="card mb-2">
+                          <div className="card-header clickable" onClick={() => toggleGroup(groupAssignments[0].subject_name, groupAssignments[0].subject_group_name)}>
+                            <h3 className="card-title">{groupAssignments[0].subject_group_name}</h3>
                           </div>
-                          {expandedGroups[assignment.subject_name + '-' + assignment.subject_group_name] && (
+                          {expandedGroups[groupAssignments[0].subject_name + '-' + groupAssignments[0].subject_group_name] && (
                             <div className="card-body">
-                              {groupedAssignments.map((assignment) => (
+                              {groupAssignments.map((assignment) => (
                                 <div key={assignment.id} className="card mb-2">
                                   <div className="card-header clickable" onClick={() => toggleAssignment(assignment.id)}>
                                     <h3 className="card-title">{assignment.assignment_name}</h3>
@@ -297,10 +304,10 @@ const TeacherHomeworkPage = () => {
                                       <p>{t('deadline')}: {assignment.deadline}</p>
                                       <h4>{t('solutions')}:</h4>
                                       {assignment.solutions.length > 0 ? (
-                                        assignment.solutions.map((solution, i) => {
-                                          const uniqueKey = `${assignment.id}-${solution.id}`;
+                                        assignment.solutions.map((solution) => {
+                                          const uniqueKey = `${assignment.assignment_name}-${solution.s3_location}`;
                                           return (
-                                            <div key={i} className="solution">
+                                            <div key={uniqueKey} className="solution">
                                               <p>{t('student')}: {solution.surname} {solution.last_name}</p>
                                               <p>
                                                 <button className="btn btn-outline-secondary" onClick={() => handleFileDownload(solution.s3_location)}>
@@ -318,7 +325,7 @@ const TeacherHomeworkPage = () => {
                                                     value={markInputs[uniqueKey] || ''}
                                                     onChange={(e) => handleMarkChange(e, uniqueKey)}
                                                   />
-                                                  <button className="btn btn-outline-success" onClick={() => handleMarkSubmit(assignment.id, solution.id, solution.s3_location)}>{t('submit')}</button>
+                                                  <button className="btn btn-outline-success" onClick={() => handleMarkSubmit(assignment.assignment_name, solution.s3_location)}>{t('submit')}</button>
                                                 </div>
                                               )}
                                             </div>
